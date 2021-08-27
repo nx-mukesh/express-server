@@ -1,4 +1,4 @@
-// Diamond pattern
+// #39515 Diamond pattern
 
 const diamondShape = (row) => {
   for (let i = 1; i <= row; i++) {
@@ -22,4 +22,5 @@ const diamondShape = (row) => {
     }
   }
 };
+
 diamondShape(5);

@@ -1,4 +1,4 @@
-//Equilateral pattern
+//#39515 Equilateral pattern
 
 const equilateral = (row) => {
   for (let i = 1; i <= row; i++) {
