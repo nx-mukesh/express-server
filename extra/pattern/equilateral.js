@@ -1,4 +1,6 @@
-const equilateral = (row)=>{
+//Equilateral pattern
+
+const equilateral = (row) => {
   for (let i = 1; i <= row; i++) {
     for (let s = row - 1; s >= i; s--) {
       process.stdout.write(" ");
@@ -8,6 +10,6 @@ const equilateral = (row)=>{
     }
     console.log();
   }
-}
+};
 
-equilateral(5)
+equilateral(5);

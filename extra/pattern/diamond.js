@@ -1,3 +1,5 @@
+// Diamond pattern
+
 const diamondShape = (row) => {
   for (let i = 1; i <= row; i++) {
     for (let s = row - 1; s >= i; s--) {
