@@ -1,0 +1,32 @@
+{
+  "name": "express-server",
+  "version": "1.0.0",
+  "description": "Basic Git and Github training  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",
+  "main": "index.js",
+  "dependencies": {
+    "nodemon": "^2.0.12",
+    "tsc-watch": "^4.5.0",
+    "typescript": "^4.4.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.15.0",
+    "@babel/node": "^7.14.9",
+    "@babel/preset-env": "^7.15.0",
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0"
+  },
+  "scripts": {
+    "start": "babel-node extra"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mukesh-maurya9/express-server.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mukesh-maurya9/express-server/issues"
+  },
+  "homepage": "https://github.com/mukesh-maurya9/express-server#readme"
+}

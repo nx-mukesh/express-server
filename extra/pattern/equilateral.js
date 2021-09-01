@@ -12,4 +12,6 @@ const equilateral = (row) => {
   }
 };
 
-equilateral(5);
+// equilateral(5)
+
+export default equilateral;
