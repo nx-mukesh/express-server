@@ -14,10 +14,9 @@
     "baseUrl": ".",
     "paths": {
       "*": ["node_modules/*", "src/types/*"]
-    },
+    }
   },
-  "exclude": ["dist", "node_modules"],
-  "include": ["src/dist"],
+  "exclude": ["dist"],
+  "include": ["extraTs"],
   "types": ["src/types"]
 }
-

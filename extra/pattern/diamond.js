@@ -1,5 +1,10 @@
 // #39515 Diamond pattern
 
+/**
+ * This function return star patter takes numbers of row as input
+ * @param {int} size  
+ * @return {string} *
+ */
 const diamondShape = (size)=>{
   for(var i=1;i<=size;i++){
      for(var s=size-1;s>=i;s--){
