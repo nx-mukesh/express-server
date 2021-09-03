@@ -2,7 +2,7 @@ import validateEmail from "./helpers";
 import { users } from "../constants";
 
 // validate user (list of user's emails)
-const validateUsers = (users) => {
+const validateUsers = (users: any): any => {
   // console.log(users);
   const validUsers = [];
   const invalidUsers = [];
@@ -30,8 +30,6 @@ const validateUsers = (users) => {
   };
   // console.log(result)
 };
-
-
 
 // check array of users
 console.log(validateUsers(users));

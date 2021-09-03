@@ -1,5 +1,5 @@
-import { diamondShape, equilateral } from "./pattern";
-import hasPermission from "./utils/permission";
+import { diamondShape, equilateral } from './pattern';
+import hasPermission from './utils/permission';
 
 // calling function
 let rowForDiamond = 6;
