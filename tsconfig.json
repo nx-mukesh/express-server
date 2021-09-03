@@ -17,6 +17,6 @@
     }
   },
   "exclude": ["dist"],
-  "include": ["extraTs"],
+  "include": ["src"],
   "types": ["src/types"]
 }
