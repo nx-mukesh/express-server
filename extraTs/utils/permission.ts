@@ -1,4 +1,4 @@
-import permission from "../constants";
+import { permission } from "../constants";
 
 /**
  * this function check user object has permission of specific task
@@ -7,7 +7,7 @@ import permission from "../constants";
  * @param {string} permissionType
  */
 
-const hasPermission = (moduleName, role, permissionType) => {
+const hasPermission = (moduleName:string, role:string, permissionType:string):boolean => {
   const { all, read, write } = permission.getUsers;
   if (all.includes(role)) {
     return true;

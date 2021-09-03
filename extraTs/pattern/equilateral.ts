@@ -1,6 +1,6 @@
 //#39515 Equilateral pattern
 
-const equilateral = (row) => {
+const equilateral = (row:number):void => {
   for (let i = 1; i <= row; i++) {
     for (let s = row - 1; s >= i; s--) {
       process.stdout.write(" ");

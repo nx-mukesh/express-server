@@ -5,7 +5,7 @@
  * @param {int} size  
  * @return {string} *
  */
-const diamondShape = (size)=>{
+const diamondShape = (size:number):void=>{
   for(var i=1;i<=size;i++){
      for(var s=size-1;s>=i;s--){
         process.stdout.write(" ");

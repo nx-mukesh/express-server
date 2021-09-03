@@ -1,5 +1,5 @@
-
 import validateEmail from "./helpers";
+import { users } from "../constants";
 
 // validate user (list of user's emails)
 const validateUsers = (users) => {
@@ -8,7 +8,7 @@ const validateUsers = (users) => {
   const invalidUsers = [];
 
   users.forEach((userId) => {
-    const {traineeEmail, reviewerEmail} = users[0];
+    const { traineeEmail, reviewerEmail } = users[0];
 
     if (validateEmail(traineeEmail)) {
       validUsers.push(userId.traineeEmail);
@@ -31,18 +31,7 @@ const validateUsers = (users) => {
   // console.log(result)
 };
 
-// list of user's emails
-const users = [
-  {
-    traineeEmail: "trainee1@successive.tech",
-    reviewerEmail: "reviewer1@successive.tech",
-  },
-];
 
-let userEmail = "trainee1@successive.tech";
-
-// check Single User
-// console.log(validateEmail(userEmail));
 
 // check array of users
 console.log(validateUsers(users));
