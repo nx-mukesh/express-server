@@ -8,7 +8,7 @@ const errorHandler = (err, req: Request, res: Response, next: NextFunction) => {
   const errorResponse = {
     error: error || "undefine",
     message: message || "error",
-    status: status || "5000",
+    status: status || "500",
     timestamp: new Date(),
   };
 

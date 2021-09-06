@@ -2,6 +2,7 @@ import * as express from "express";
 import * as bodyParser from "body-parser";
 import notFoundRoute from "./libs/routes/notFoundRoute";
 import errorHandler from "./libs/routes/errorHandler";
+import router from './router';
 
 export default class Server {
   private app: express.Express;
@@ -32,11 +33,10 @@ export default class Server {
     app.use("/health-check", (req, res) => {
       res.status(200).send("I am OK");
     });
-
+    app.use("/api", router)
     app.use(notFoundRoute);
     app.use(errorHandler);
   }
-
   /**
    * To bootstrap app
    * @returns
