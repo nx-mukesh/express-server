@@ -1,7 +1,6 @@
-import * as express from "express";
-import * as bodyParser from "body-parser";
-import notFoundRoute from "./libs/routes/notFoundRoute";
-import errorHandler from "./libs/routes/errorHandler";
+import * as express from 'express';
+import * as bodyParser from 'body-parser';
+import { notFoundRoute, errorHandler } from './libs/routes';
 import router from './router';
 
 export default class Server {
@@ -16,8 +15,9 @@ export default class Server {
   }
 
   public initBodyParser() {
+    // middleware
     const { app } = this;
-    app.use(bodyParser.urlencoded({ extended: false }));
+    app.use(bodyParser.urlencoded({ extended: true }));
     app.use(bodyParser.json());
   }
 
@@ -29,11 +29,12 @@ export default class Server {
 
   public setupRoute() {
     const { app } = this;
+    var jsonParser = bodyParser.json();
 
-    app.use("/health-check", (req, res) => {
-      res.status(200).send("I am OK");
+    app.use('/health-check', (req, res) => {
+      res.status(200).send('I am OK');
     });
-    app.use("/api", router)
+    app.use('/api', jsonParser, router);
     app.use(notFoundRoute);
     app.use(errorHandler);
   }
