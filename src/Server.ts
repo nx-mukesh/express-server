@@ -1,7 +1,6 @@
-import * as express from "express";
-import * as bodyParser from "body-parser";
-import notFoundRoute from "./libs/routes/notFoundRoute";
-import errorHandler from "./libs/routes/errorHandler";
+import * as express from 'express';
+import * as bodyParser from 'body-parser';
+import { notFoundRoute, errorHandler } from './libs/routes';
 
 export default class Server {
   private app: express.Express;
@@ -29,8 +28,8 @@ export default class Server {
   public setupRoute() {
     const { app } = this;
 
-    app.use("/health-check", (req, res) => {
-      res.status(200).send("I am OK");
+    app.use('/health-check', (req, res) => {
+      res.status(200).send('I am OK');
     });
 
     app.use(notFoundRoute);

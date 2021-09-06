@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from 'express';
 
 const errorHandler = (err, req: Request, res: Response, next: NextFunction) => {
   if (res.headersSent) {
@@ -6,9 +6,9 @@ const errorHandler = (err, req: Request, res: Response, next: NextFunction) => {
   }
   const { message, status, error } = err;
   const errorResponse = {
-    error: error || "undefine",
-    message: message || "error",
-    status: status || "5000",
+    error: error || 'undefine',
+    message: message || 'error',
+    status: status || '5000',
     timestamp: new Date(),
   };
 
