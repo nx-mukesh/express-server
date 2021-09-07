@@ -29,7 +29,7 @@ export default class Server {
 
   public setupRoute() {
     const { app } = this;
-    var jsonParser = bodyParser.json();
+    const jsonParser = bodyParser.json();
 
     app.use('/health-check', (req, res) => {
       res.status(200).send('I am OK');

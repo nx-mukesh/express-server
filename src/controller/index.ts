@@ -1,4 +1,3 @@
-import traineeRouter from "./trainee";
+import traineeRouter from './trainee';
 
-
-export {traineeRouter};
+export { traineeRouter };
