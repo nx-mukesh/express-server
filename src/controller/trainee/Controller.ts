@@ -35,7 +35,7 @@ class Trainee {
     try {
       const data = [];
       const newTrainee = {
-        id: req.body.id,
+        id: req.body.id ? req.body.id : Math.floor(Math.random() * 10),
         name: req.body.name,
         address: req.body.address,
         role: req.body.role,

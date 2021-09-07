@@ -29,12 +29,12 @@ export default class Server {
 
   public setupRoute() {
     const { app } = this;
-    const jsonParser = bodyParser.json();
+    // const jsonParser = bodyParser.json();
 
     app.use('/health-check', (req, res) => {
       res.status(200).send('I am OK');
     });
-    app.use('/api', jsonParser, router);
+    app.use('/api', router);
     app.use(notFoundRoute);
     app.use(errorHandler);
   }
@@ -43,8 +43,8 @@ export default class Server {
    * @returns
    */
   bootstrap() {
-    this.setupRoute();
     this.initBodyParser();
+    this.setupRoute();
 
     return this.app;
   }

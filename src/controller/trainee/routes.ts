@@ -6,7 +6,7 @@ const router = Router();
 router
   .get('/', traineeController.getTrainee)
   .post('/', traineeController.addTrainee)
-  .put('/:id', traineeController.editTrainee)
+  .put('/', traineeController.editTrainee)
   .delete('/:id', traineeController.deleteTrainee);
 
 export default router;
