@@ -3,6 +3,7 @@ import * as bodyParser from 'body-parser';
 import { notFoundRoute, errorHandler } from './libs/routes';
 import router from './router';
 
+
 export default class Server {
   private app: express.Express;
 
