@@ -7,7 +7,7 @@ const router = Router();
 
 router
   .get('/', validationHandler(validation.get), traineeController.getTrainee)
-  .post('/', validationHandler(validation.create), traineeController.addTrainee)
+  .post('/',  validationHandler(validation.create), traineeController.addTrainee)
   .put('/', validationHandler(validation.update), traineeController.editTrainee)
   .delete(
     '/:id',

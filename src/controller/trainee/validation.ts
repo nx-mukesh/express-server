@@ -2,13 +2,15 @@ export default Object.freeze({
   // POST  /api/trainee/create
   create: {
     id: {
-      required: true,
+      // exists:true,
+      errorMessage: 'Id is required',
+      // required: true,
       string: true,
-      in: ['body'],
-      custom: (value) => {
-        console.log('Value', value);
-        throw { error: 'Error Occurred', message: 'Message' };
-      },
+      // in: ['body'],
+      // custom: (value) => {
+      //   console.log('Value', value);
+      //   throw { error: 'Error Occurred', message: 'Message' };
+      // },
     },
     name: {
       required: true,
@@ -37,15 +39,19 @@ export default Object.freeze({
     },
   },
   update: {
-    id: { required: true, string: true, in: ['body'] },
+    id: {
+      // required: true,
+      string: true,
+      in: ['body'],
+    },
     dataToUpdate: {
       in: ['body'],
       required: true,
-      isObject: true,
-      custom: (dataToUpdate) => {
-        console.log('dataToUpdate', dataToUpdate);
-        throw { error: 'Error Occurred', message: 'Message' };
-      },
+      // isObject: true,
+      // custom: (dataToUpdate) => {
+      //   console.log('dataToUpdate', dataToUpdate);
+      //   throw { error: 'Error Occurred', message: 'Message' };
+      // },
     },
   },
 });

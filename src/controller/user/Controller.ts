@@ -79,13 +79,13 @@ class User {
   //   delete user by id -
   delete(req: Request, res: Response, next: NextFunction) {
     const userData = [
-      { _id: '1', name: 'John Milton', role: 'Author', address: 'Washington' },
-      { _id: '2', name: 'Thomas Crew', role: 'Editor', address: 'New York' },
-      { _id: '3', name: 'Selena peter', role: 'Singer', address: 'Alaska' },
+      { id: '1', name: 'John Milton', role: 'Author', address: 'Washington' },
+      { id: '2', name: 'Thomas Crew', role: 'Editor', address: 'New York' },
+      { id: '3', name: 'Selena peter', role: 'Singer', address: 'Alaska' },
     ];
     try {
       const Id = req.params.id;
-      const toDeleteUser = userData.find((item) => item._id === Id);
+      const toDeleteUser = userData.find((item) => item.id === Id);
       userData.splice(userData.indexOf(toDeleteUser), 1);
       return res
         .status(200)
