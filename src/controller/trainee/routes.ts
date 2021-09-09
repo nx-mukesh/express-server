@@ -2,7 +2,7 @@ import { Router } from 'express';
 import traineeController from './Controller';
 import validationHandler from '../../libs/validationHandler';
 import authMiddleware from '../../libs/routes/authMiddleWare';
-import { TRAINEE } from '../../libs/constants';
+import { TRAINEES } from '../../libs/constants';
 import validation from './validation';
 
 const router = Router();
@@ -10,25 +10,25 @@ const router = Router();
 router
   .get(
     '/',
-    authMiddleware(TRAINEE, 'read'),
+    authMiddleware(TRAINEES, 'read'),
     validationHandler(validation.get),
     traineeController.getTrainee
   )
   .post(
     '/',
-    authMiddleware(TRAINEE, 'write'),
+    authMiddleware(TRAINEES, 'write'),
     validationHandler(validation.create),
     traineeController.addTrainee
   )
   .put(
     '/',
-    authMiddleware(TRAINEE, 'write'),
+    authMiddleware(TRAINEES, 'write'),
     validationHandler(validation.update),
     traineeController.editTrainee
   )
   .delete(
     '/:id',
-    authMiddleware(TRAINEE, 'delete'),
+    authMiddleware(TRAINEES, 'delete'),
     validationHandler(validation.delete),
     traineeController.deleteTrainee
   )

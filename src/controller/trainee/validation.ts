@@ -2,7 +2,7 @@ export default Object.freeze({
   // POST  /api/trainee/create
   create: {
     id: {
-      // exists:true,
+      exists: true,
       errorMessage: 'Id is required',
       // required: true,
       string: true,

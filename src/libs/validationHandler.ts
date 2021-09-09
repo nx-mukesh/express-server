@@ -1,5 +1,6 @@
+// import { checkSchema, validationResult } from 'express-validator/check'; => bug: express-validator version error
+
 const { checkSchema, validationResult } = require('express-validator/check');
-// import { checkSchema, validationResult } from 'express-validator/check';
 
 const validationHandler = (validator) => {
   return [

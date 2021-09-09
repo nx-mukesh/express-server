@@ -6,20 +6,23 @@ export default function hasPermission(
   type: string
 ): boolean {
   const permission = permissions[module];
+
+  console.log('permission', permission);
+
   if (!permission || !permission[type]) {
     console.log(
-      `\n ${role} do not have permission to ${type} permission for the module ${module}`
+      `\n(1) ${role} do not have permission to ${type} permission for the module ${module}`
     );
     return false;
   }
   if (!permission[type].includes(role)) {
     console.log(
-      `\n ${role}do not have permission to ${type} permission for the module ${module}`
+      `\n(2) ${role}do not have permission to ${type} permission for the module ${module}`
     );
     return false;
   }
   console.log(
     `\n ${role} do not have permission to ${type} permission for the module ${module}`
   );
-  return false;
+  return true;
 }
