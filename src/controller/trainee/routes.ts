@@ -32,6 +32,9 @@ router
     validationHandler(validation.delete),
     traineeController.deleteTrainee
   )
-  .post('/createToken', traineeController.createToken);
+  .post(
+    '/createToken',
+    traineeController.createToken
+  );
 
 export default router;

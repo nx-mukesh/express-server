@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
+import * as jwt from 'jsonwebtoken';
 import config from '../../config/configuration';
 
 class Trainee {
@@ -116,9 +116,21 @@ class Trainee {
       return res.status(500).send({ err: error, message: 'error' });
     }
   }
-  createToken(req: Request, res: Response, next: NextFunction){
-    const token = jwt.sign(req.body, config.secret);
-    return res.status(200).send({message:"token successfully created", data:{token}, status:200})
+  // Create JWT token -----
+  createToken(req: Request, res: Response, next: NextFunction) {
+    try {
+      console.log('hello');
+      const token = jwt.sign(req.body, config.secret, { expiresIn: '10h' });
+      return res.status(200).send({
+        message: 'token successfully created',
+        data: { token },
+        status: 200,
+      });
+    } catch (error) {
+      return res
+        .status(500)
+        .send({ err: 'Server Error', message: 'Something went wrong' });
+    }
   }
 }
 
