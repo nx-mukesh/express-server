@@ -1,8 +1,8 @@
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
+import * as morgan from 'morgan';
 import { notFoundRoute, errorHandler } from './libs/routes';
 import router from './router';
-
 
 export default class Server {
   private app: express.Express;
@@ -18,6 +18,7 @@ export default class Server {
   public initBodyParser() {
     // middleware
     const { app } = this;
+    app.use(morgan('combined'));
     app.use(bodyParser.urlencoded({ extended: true }));
     app.use(bodyParser.json());
   }
