@@ -1,4 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
+import jwt from 'jsonwebtoken';
+import config from '../../config/configuration';
 
 class Trainee {
   getTrainee(req: Request, res: Response, next: NextFunction) {
@@ -113,6 +115,10 @@ class Trainee {
     } catch (error) {
       return res.status(500).send({ err: error, message: 'error' });
     }
+  }
+  createToken(req: Request, res: Response, next: NextFunction){
+    const token = jwt.sign(req.body, config.secret);
+    return res.status(200).send({message:"token successfully created", data:{token}, status:200})
   }
 }
 
