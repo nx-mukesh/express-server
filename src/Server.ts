@@ -1,6 +1,7 @@
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
 import * as morgan from 'morgan';
+import Database from './libs/Database';
 import { notFoundRoute, errorHandler } from './libs/routes';
 import router from './router';
 
@@ -51,13 +52,18 @@ export default class Server {
     return this.app;
   }
 
-  public run() {
-    const { port, env } = this.config;
-    this.app.listen(port, () => {
-      console.log(
-        `Server started successfully on ${port} in ${env} environment`
-      );
-    });
+  public async run() {
+    const { port, env, mongoURL } = this.config;
+    try {
+      await Database.open(mongoURL);
+      this.app.listen(port, () => {
+        console.log(
+          `|| Server is running at PORT '${port}' in '${env}' mode ||`
+        );
+      });
+    } catch (err) {
+      console.log('Database connection error', err);
+    }
     return this;
   }
 }
