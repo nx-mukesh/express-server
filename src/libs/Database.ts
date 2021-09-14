@@ -1,4 +1,5 @@
 import * as mongoose from 'mongoose';
+import seedData from './seedData';
 
 export default class Database {
   public static open(mongoURL) {
@@ -9,8 +10,12 @@ export default class Database {
           return reject(err);
         }
         console.log('|| Database connected successfully ||');
+        seedData();
         return resolve('Database Connected');
       });
     });
+  }
+  public static close(mongoURL) {
+    mongoose.disconnect();
   }
 }
