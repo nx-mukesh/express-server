@@ -26,7 +26,6 @@ export default class UserRepository {
   }
 
   public create(data: any): Promise<IUserModel> {
-    // console.log('UserRepository:: update', data);
     const id = UserRepository.generationObjectId();
     const model = new userModel({
       _id: id,
@@ -34,9 +33,8 @@ export default class UserRepository {
     });
     return model.save();
   }
-  
+
   public update(data: any): mongoose.UpdateQuery<IUserModel> {
-    // console.log('userRepository:: update', data);
     return userModel.updateOne(data);
   }
 }
