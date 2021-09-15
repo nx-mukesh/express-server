@@ -3,6 +3,8 @@ import { userModel } from './UserModel';
 import IUserModel from './IUserModel';
 
 export default class UserRepository {
+  
+  // static generate mongodb ObjectId
   public static generateObjectId() {
     return String(new mongoose.Types.ObjectId());
   }
