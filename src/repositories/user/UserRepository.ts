@@ -2,14 +2,13 @@ import * as mongoose from 'mongoose';
 import { userModel } from './UserModel';
 import IUserModel from './IUserModel';
 
-
 export default class UserRepository {
-
-  public static generationObjectId() {
+  public static generateObjectId() {
     return String(new mongoose.Types.ObjectId());
   }
 
   public findOne(query): mongoose.Query<IUserModel, IUserModel> {
+    console.log('Query::', query);
     return userModel.findOne(query).lean();
   }
 
@@ -26,7 +25,8 @@ export default class UserRepository {
   }
 
   public create(data: any): Promise<IUserModel> {
-    const id = UserRepository.generationObjectId();
+    console.log('UserRepository :: create data', data);
+    const id = UserRepository.generateObjectId();
     const model = new userModel({
       _id: id,
       ...data,
@@ -35,6 +35,7 @@ export default class UserRepository {
   }
 
   public update(data: any): mongoose.UpdateQuery<IUserModel> {
+    console.log('UserRepository:: Update - data', data);
     return userModel.updateOne(data);
   }
 }

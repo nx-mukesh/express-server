@@ -7,19 +7,19 @@ class Trainee {
     try {
       const trainee = [
         {
-          id: 1,
+          _id: 1,
           name: 'Mukesh',
           address: 'Noida',
           role: 'SD1',
         },
         {
-          id: 2,
+          _id: 2,
           name: 'Rajeev',
           address: 'New Delhi',
           role: 'HR',
         },
         {
-          id: 3,
+          _id: 3,
           name: 'Narayan Murti',
           address: 'Bengaluru',
           role: 'HOD',
@@ -37,8 +37,9 @@ class Trainee {
     try {
       const data = [];
       const newTrainee = {
-        id: req.body.id ? req.body.id : Math.floor(Math.random() * 100),
+        _id: req.body._id ? req.body._id : Math.floor(Math.random() * 100),
         name: req.body.name,
+        email:req.body.email,
         address: req.body.address,
         role: req.body.role,
       };

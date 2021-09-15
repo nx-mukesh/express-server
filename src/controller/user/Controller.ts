@@ -1,30 +1,50 @@
 import { Request, Response, NextFunction } from 'express';
-import user from '.';
+import UserRepository from '../../repositories/user/UserRepository';
+import config from '../../config/configuration';
+import * as jwt from 'jsonwebtoken';
 
 class User {
   //   get User Details
   get(req: Request, res: Response, next: NextFunction) {
-    const userData = [
-      { id: '1', name: 'John Milton', role: 'Author', address: 'Washington' },
-      { id: '2', name: 'Thomas Crew', role: 'Editor', address: 'New York' },
-      { id: '3', name: 'Selena peter', role: 'Singer', address: 'Alaska' },
-    ];
+    const token = req.header('Authorization');
+    if (!token) {
+      next({ err: 'Unauthorized', message: 'Token not found', status: 403 });
+    }
+
+    const { secret } = config;
+    let user;
     try {
+      user = jwt.verify(token, secret);
+    } catch (err) {
+      next({
+        err: 'Unauthorized',
+        message: 'User not Authorized to access..!!',
+        status: 403,
+      });
+    }
+
+    try {
+      console.log('user is=>', user);
+      // const userRepository: UserRepository = new UserRepository();
+      // const userData = userRepository.findOne({ _id: user._id });
       return res.status(200).send({
         message: 'user data fetched successfully',
-        data: userData,
+        data: user,
       });
     } catch (error) {
       return res
         .status(500)
-        .send({ err: error, message: 'Something went wrong' });
+        .send({ err: error, message: 'Something went wrong..!!' });
     }
   }
+
+  // Create new User
   post(req: Request, res: Response, next: NextFunction) {
     try {
       const newUser = {
-        id: req.body.id ? req.body.id : Math.floor(Math.random() * 10),
+        id: req.body.id,
         name: req.body.name,
+        email:req.body.email,
         role: req.body.role,
         address: req.body.address,
       };
@@ -33,6 +53,30 @@ class User {
           .status(400)
           .send({ err: 'Bad request', message: 'user details required' });
       }
+
+      const { name, id, email } = req.body;
+      if (!name) {
+        return next({
+          err: 'Bad Request',
+          message: 'Name is required',
+          status: 400,
+        });
+      }
+      if (!id) {
+        return next({
+          err: 'Bad Request',
+          message: 'Id is required',
+          status: 400,
+        });
+      }
+      if (!email) {
+        return next({
+          err: 'Bad Request',
+          message: 'email is required',
+          status: 400,
+        });
+      }
+
       const userData = [];
       userData.push(newUser);
       return res
@@ -57,12 +101,10 @@ class User {
       };
 
       if (!updatedUser.id || !updatedUser.name || !updatedUser.role) {
-        return res
-          .status(400)
-          .send({
-            err: 'Bad request',
-            message: 'fill all details user Details',
-          });
+        return res.status(400).send({
+          err: 'Bad request',
+          message: 'fill all details user Details',
+        });
       }
       userData.push(updatedUser);
 
@@ -87,13 +129,11 @@ class User {
       const Id = req.params.id;
       const toDeleteUser = userData.find((item) => item.id === Id);
       userData.splice(userData.indexOf(toDeleteUser), 1);
-      return res
-        .status(200)
-        .send({
-          message: 'user deleted successfully',
-          data: userData,
-          deleted_User: toDeleteUser,
-        });
+      return res.status(200).send({
+        message: 'user deleted successfully',
+        data: userData,
+        deleted_User: toDeleteUser,
+      });
     } catch (error) {
       return res
         .status(500)
