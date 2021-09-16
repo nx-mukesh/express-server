@@ -59,28 +59,28 @@ class User {
           .send({ err: 'Bad request', message: 'user details required' });
       }
 
-      // const { name, id, email } = req.body;
-      // if (!name) {
-      //   return next({
-      //     err: 'Bad Request',
-      //     message: 'Name is required',
-      //     status: 400,
-      //   });
-      // }
-      // if (!id) {
-      //   return next({
-      //     err: 'Bad Request',
-      //     message: 'Id is required',
-      //     status: 400,
-      //   });
-      // }
-      // if (!email) {
-      //   return next({
-      //     err: 'Bad Request',
-      //     message: 'email is required',
-      //     status: 400,
-      //   });
-      // }
+      const { name, id, email } = req.body;
+      if (!name) {
+        return next({
+          err: 'Bad Request',
+          message: 'Name is required',
+          status: 400,
+        });
+      }
+      if (!id) {
+        return next({
+          err: 'Bad Request',
+          message: 'Id is required',
+          status: 400,
+        });
+      }
+      if (!email) {
+        return next({
+          err: 'Bad Request',
+          message: 'email is required',
+          status: 400,
+        });
+      }
 
       const userData = userRepository.create({ newUser });
       console.log({userData});
