@@ -117,6 +117,7 @@ class Trainee {
       return res.status(500).send({ err: error, message: 'error' });
     }
   }
+  
   // Create JWT token -----
   createToken(req: Request, res: Response, next: NextFunction) {
     try {

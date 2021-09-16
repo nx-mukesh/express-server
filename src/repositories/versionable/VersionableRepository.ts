@@ -25,12 +25,19 @@ export default class VersionableRepository<
     return this.model.findOne(finalQuery);
   }
 
-  public find(query, projection?: any, options?: any): mongoose.Query <mongoose.EnforceDocument<D, {}>[], mongoose.EnforceDocument<D, {}>> {
+  public find(
+    query,
+    projection?: any,
+    options?: any
+  ): mongoose.Query<
+    mongoose.EnforceDocument<D, {}>[],
+    mongoose.EnforceDocument<D, {}>
+  > {
     const finalQuery = { deletedAt: null, ...query };
     return this.model.find(finalQuery, projection, options);
   }
 
-  public count(): mongoose.Query <number, mongoose.EnforceDocument<D, {}>> {
+  public count(): mongoose.Query<number, mongoose.EnforceDocument<D, {}>> {
     const finalQuery = { deletedAt: null };
     return this.model.count(finalQuery);
   }

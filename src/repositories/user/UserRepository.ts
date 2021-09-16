@@ -31,8 +31,11 @@ export default class UserRepository {
     const id = UserRepository.generateObjectId();
     const model = new userModel({
       _id: id,
-      ...data,
+      ...data.newUser,
     });
+    console.log({id});
+    console.log({model});
+    
     return model.save();
   }
 

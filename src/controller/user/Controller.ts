@@ -3,6 +3,8 @@ import UserRepository from '../../repositories/user/UserRepository';
 import config from '../../config/configuration';
 import * as jwt from 'jsonwebtoken';
 
+const userRepository: UserRepository = new UserRepository();
+
 class User {
   //   get User Details
   get(req: Request, res: Response, next: NextFunction) {
@@ -15,6 +17,7 @@ class User {
     let user;
     try {
       user = jwt.verify(token, secret);
+      console.log({ user });
     } catch (err) {
       next({
         err: 'Unauthorized',
@@ -24,17 +27,17 @@ class User {
     }
 
     try {
-      console.log('user is=>', user);
-      // const userRepository: UserRepository = new UserRepository();
-      // const userData = userRepository.findOne({ _id: user._id });
+      const userData = userRepository.create({ _id: user._id });
+      console.log('userData is=>', user);
       return res.status(200).send({
         message: 'user data fetched successfully',
-        data: user,
+        data: userData,
       });
     } catch (error) {
-      return res
-        .status(500)
-        .send({ err: error, message: 'Something went wrong..!!' });
+      return res.status(500).send({
+        err: 'User not exist in Database.',
+        message: 'Something went wrong!!',
+      });
     }
   }
 
@@ -44,41 +47,44 @@ class User {
       const newUser = {
         id: req.body.id,
         name: req.body.name,
-        email:req.body.email,
-        role: req.body.role,
-        address: req.body.address,
+        email: req.body.email,
+        password: req.body.password,
+        role: req.body.role ? req.body.role : 'trainee',
       };
-      if (!newUser) {
+      console.log({newUser});
+      
+      if (!req.body) {
         return res
           .status(400)
           .send({ err: 'Bad request', message: 'user details required' });
       }
 
-      const { name, id, email } = req.body;
-      if (!name) {
-        return next({
-          err: 'Bad Request',
-          message: 'Name is required',
-          status: 400,
-        });
-      }
-      if (!id) {
-        return next({
-          err: 'Bad Request',
-          message: 'Id is required',
-          status: 400,
-        });
-      }
-      if (!email) {
-        return next({
-          err: 'Bad Request',
-          message: 'email is required',
-          status: 400,
-        });
-      }
+      // const { name, id, email } = req.body;
+      // if (!name) {
+      //   return next({
+      //     err: 'Bad Request',
+      //     message: 'Name is required',
+      //     status: 400,
+      //   });
+      // }
+      // if (!id) {
+      //   return next({
+      //     err: 'Bad Request',
+      //     message: 'Id is required',
+      //     status: 400,
+      //   });
+      // }
+      // if (!email) {
+      //   return next({
+      //     err: 'Bad Request',
+      //     message: 'email is required',
+      //     status: 400,
+      //   });
+      // }
 
-      const userData = [];
-      userData.push(newUser);
+      const userData = userRepository.create({ newUser });
+      console.log({userData});
+      
       return res
         .status(200)
         .send({ message: 'user registered successfully', users: userData });
@@ -138,6 +144,24 @@ class User {
       return res
         .status(500)
         .send({ err: 'server error', message: 'Something went Wrong' });
+    }
+  }
+
+  // Create JWT Token for all Users
+  createToken(req: Request, res: Response, next: NextFunction) {
+    try {
+      // const { email } = req.body;
+      // console.log({email})
+      const token = jwt.sign(req.body, config.secret, { expiresIn: '10h' });
+      return res.status(200).send({
+        message: 'token successfully created',
+        data: { token },
+        status: 200,
+      });
+    } catch (error) {
+      return res
+        .status(500)
+        .send({ err: 'Server Error', message: 'Something went wrong!!' });
     }
   }
 }

@@ -16,6 +16,7 @@ router
   )
   .post('/', validationHandler(validation.create), User.post)
   .put('/', validationHandler(validation.update), User.edit)
-  .delete('/:id', validationHandler(validation.delete), User.delete);
+  .delete('/:id', validationHandler(validation.delete), User.delete)
+  .post('/createToken', User.createToken);
 
 export default router;
