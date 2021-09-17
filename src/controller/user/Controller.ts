@@ -7,26 +7,16 @@ import * as jwt from 'jsonwebtoken';
 const userRepository: UserRepository = new UserRepository();
 
 class UserController {
-  async get(req: Request, res: Response, next: NextFunction) {
-    const token = req.header('Authorization');
-    if (!token) {
-      next({ err: 'Unauthorized', message: 'Token not found', status: 403 });
-    }
-
-    const { secret } = config;
-    let user;
+  get(req: Request, res: Response, next: NextFunction) {
     try {
+      const token = req.header('Authorization');
+      if (!token) {
+        return next({ err: 'Unauthorized', message: 'Token not found', status: 403 });
+      }
+      const { secret } = config;
+      let user;
       user = jwt.verify(token, secret);
-    } catch (err) {
-      next({
-        err: 'Unauthorized',
-        message: 'User not Authorized to access..!!',
-        status: 403,
-      });
-    }
-
-    try {
-      const userData = await userRepository.findOne({ _id: user.id });
+      const userData = userRepository.findOne({ _id: user.id });
       return res.status(200).send({
         message: 'user data fetched successfully',
         data: userData,
@@ -37,7 +27,7 @@ class UserController {
   }
 
   // Create new User
-  post(req: Request, res: Response, next: NextFunction) {
+  create(req: Request, res: Response, next: NextFunction) {
     try {
       const newUser = {
         id: req.body.id,
@@ -69,7 +59,7 @@ class UserController {
   }
 
   //   edit exist user data by id -
-  edit(req: Request, res: Response, next: NextFunction) {
+  update(req: Request, res: Response, next: NextFunction) {
     const userData = [];
     try {
       const updatedUser = {
