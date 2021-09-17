@@ -8,6 +8,7 @@ const userRepository: UserRepository = new UserRepository();
 
 class UserController {
   async get(req: Request, res: Response, next: NextFunction) {
+    
     const token = req.header('Authorization');
     if (!token) {
       next({ err: 'Unauthorized', message: 'Token not found', status: 403 });
