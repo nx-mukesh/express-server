@@ -7,19 +7,19 @@ class Trainee {
     try {
       const trainee = [
         {
-          id: 1,
+          _id: 1,
           name: 'Mukesh',
           address: 'Noida',
           role: 'SD1',
         },
         {
-          id: 2,
+          _id: 2,
           name: 'Rajeev',
           address: 'New Delhi',
           role: 'HR',
         },
         {
-          id: 3,
+          _id: 3,
           name: 'Narayan Murti',
           address: 'Bengaluru',
           role: 'HOD',
@@ -37,8 +37,9 @@ class Trainee {
     try {
       const data = [];
       const newTrainee = {
-        id: req.body.id ? req.body.id : Math.floor(Math.random() * 100),
+        _id: req.body._id ? req.body._id : Math.floor(Math.random() * 100),
         name: req.body.name,
+        email:req.body.email,
         address: req.body.address,
         role: req.body.role,
       };
@@ -117,21 +118,21 @@ class Trainee {
     }
   }
   // Create JWT token -----
-  createToken(req: Request, res: Response, next: NextFunction) {
-    try {
-      console.log('hello');
-      const token = jwt.sign(req.body, config.secret, { expiresIn: '10h' });
-      return res.status(200).send({
-        message: 'token successfully created',
-        data: { token },
-        status: 200,
-      });
-    } catch (error) {
-      return res
-        .status(500)
-        .send({ err: 'Server Error', message: 'Something went wrong' });
-    }
-  }
+  // createToken(req: Request, res: Response, next: NextFunction) {
+  //   try {
+  //     console.log('hello');
+  //     const token = jwt.sign(req.body, config.secret, { expiresIn: '10h' });
+  //     return res.status(200).send({
+  //       message: 'token successfully created',
+  //       data: { token },
+  //       status: 200,
+  //     });
+  //   } catch (error) {
+  //     return res
+  //       .status(500)
+  //       .send({ err: 'Server Error', message: 'Something went wrong' });
+  //   }
+  // }
 }
 
 export default new Trainee();

@@ -1,10 +1,12 @@
 import UserRepository from '../repositories/user/UserRepository';
+// import TraineeRepository from '../repositories/trainee/TraineeRepository';
+
 
 const userRepository: UserRepository = new UserRepository();
 export default () => {
   userRepository
     .count().then((res) => {
-      console.log('res', typeof res);
+      // console.log('res', typeof res);
       if (res === 0) {
         console.log('Data seeding in progress');
         userRepository.create({
@@ -23,3 +25,4 @@ export default () => {
     })
     .catch((err) => console.log(err));
 };
+
