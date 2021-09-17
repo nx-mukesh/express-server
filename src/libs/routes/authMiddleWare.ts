@@ -9,7 +9,7 @@ const authMiddleware = (module, permissionType) => async (req, res, next) => {
   if (!token) {
     next({ err: 'Unauthorized', message: 'Token not found', status: 403 });
   }
-  
+
   let user;
   const { secret } = config;
   try {

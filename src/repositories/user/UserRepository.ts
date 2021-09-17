@@ -21,13 +21,12 @@ export default class UserRepository {
   }
 
   public async create(data: any): Promise<IUserModel> {
-    console.log('UserRepository :: create data', data);
     const id = UserRepository.generateObjectId();
     const model = await new userModel({
       _id: id,
-      ...data.newUser,
+      ...data,
     });
-    console.log({ model });
+    console.log('UserRepository :: create data', model);
     return model.save();
   }
 

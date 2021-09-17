@@ -1,13 +1,11 @@
-import * as mongoose from 'mongoose';
 import VersionableSchema from '../versionable/VersionableSchema';
-
 
 class UserSchema extends VersionableSchema {
   constructor(collections: any) {
     const baseSchema = {
       _id: { type: String },
       name: { type: String },
-      email: { type: String, required:true },
+      email: { type: String, required: true },
       password: { type: String },
       role: { type: String },
     };

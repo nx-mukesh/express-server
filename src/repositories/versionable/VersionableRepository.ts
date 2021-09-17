@@ -1,27 +1,21 @@
 import * as mongoose from 'mongoose';
 
-export default class VersionableRepository<
-  D extends mongoose.Document,
-  M extends mongoose.Model<D>
-> {
+export default class VersionableRepository<D extends mongoose.Document, M extends mongoose.Model<D>> {
   private model: M;
   constructor(model) {
     this.model = model;
   }
 
-  // static generate mongodb ObjectId
   public static generateObjectId() {
     return String(new mongoose.Types.ObjectId());
   }
 
-  public findOne(
-    query: any
-  ): mongoose.Query<
-    mongoose.EnforceDocument<D, {}>,
-    mongoose.EnforceDocument<D, {}>
-  > {
+  public findOne(query: any): mongoose.Query<mongoose.EnforceDocument<D, {}>, mongoose.EnforceDocument<D, {}>> {
     console.log('Query::', query);
     const finalQuery = { deletedAt: null, ...query };
+		const findOneData = this.model.findOne(finalQuery)
+		console.log(findOneData);
+		
     return this.model.findOne(finalQuery);
   }
 
@@ -29,11 +23,10 @@ export default class VersionableRepository<
     query,
     projection?: any,
     options?: any
-  ): mongoose.Query<
-    mongoose.EnforceDocument<D, {}>[],
-    mongoose.EnforceDocument<D, {}>
-  > {
+  ): mongoose.Query<mongoose.EnforceDocument<D, {}>[], mongoose.EnforceDocument<D, {}>> {
     const finalQuery = { deletedAt: null, ...query };
+		const findData = this.model.find(finalQuery, projection, options)
+		console.log(findData);
     return this.model.find(finalQuery, projection, options);
   }
 
@@ -45,7 +38,7 @@ export default class VersionableRepository<
   public create(data: any): Promise<D> {
     console.log('UserRepository :: create data', data);
     const id = VersionableRepository.generateObjectId();
-    console.log(id);
+    console.log({id});
     const model = new this.model({
       _id: id,
       originalId: id,
@@ -54,25 +47,15 @@ export default class VersionableRepository<
     return model.save();
   }
 
-  public softDelete(
-    filter,
-    data
-  ): mongoose.Query<any, mongoose.EnforceDocument<D, {}>> {
+  public softDelete(filter, data): mongoose.Query<any, mongoose.EnforceDocument<D, {}>> {
     return this.model.updateOne(filter, data);
   }
-
-  // hardDelete (id:string){
-  //   return this.model.deleteOne({originalId:id})
-  // }
 
   public async update(data: any): Promise<D> {
     console.log('UserRepository:: Update - data', data);
     const previousRecord = await this.find({ originalId: data.originalId });
     if (previousRecord) {
-      await this.softDelete(
-        { originalId: data.originalId, deleteAt: null },
-        { deletedAt: Date.now() }
-      );
+      await this.softDelete({ originalId: data.originalId, deleteAt: null }, { deletedAt: Date.now() });
     } else {
       return null;
     }
