@@ -1,11 +1,13 @@
 import { Request, Response, NextFunction } from 'express';
 import UserRepository from '../../repositories/user/UserRepository';
+// import bcrypt from 'bcrypt';
 import config from '../../config/configuration';
 import * as jwt from 'jsonwebtoken';
 
-class User {
-  //   get User Details
-  get(req: Request, res: Response, next: NextFunction) {
+const userRepository: UserRepository = new UserRepository();
+
+class UserController {
+  async get(req: Request, res: Response, next: NextFunction) {
     const token = req.header('Authorization');
     if (!token) {
       next({ err: 'Unauthorized', message: 'Token not found', status: 403 });
@@ -24,17 +26,13 @@ class User {
     }
 
     try {
-      console.log('user is=>', user);
-      // const userRepository: UserRepository = new UserRepository();
-      // const userData = userRepository.findOne({ _id: user._id });
+      const userData = await userRepository.findOne({ _id: user.id });
       return res.status(200).send({
         message: 'user data fetched successfully',
-        data: user,
+        data: userData,
       });
     } catch (error) {
-      return res
-        .status(500)
-        .send({ err: error, message: 'Something went wrong..!!' });
+      return res.status(500).send({ err: error, message: 'Something went wrong..!!' });
     }
   }
 
@@ -44,24 +42,11 @@ class User {
       const newUser = {
         id: req.body.id,
         name: req.body.name,
-        email:req.body.email,
-        role: req.body.role,
-        address: req.body.address,
+        email: req.body.email,
+        password: req.body.password,
+        role: req.body.role ? req.body.role : 'trainee',
       };
-      if (!newUser) {
-        return res
-          .status(400)
-          .send({ err: 'Bad request', message: 'user details required' });
-      }
-
-      const { name, id, email } = req.body;
-      if (!name) {
-        return next({
-          err: 'Bad Request',
-          message: 'Name is required',
-          status: 400,
-        });
-      }
+      const { id, email } = req.body;
       if (!id) {
         return next({
           err: 'Bad Request',
@@ -76,16 +61,10 @@ class User {
           status: 400,
         });
       }
-
-      const userData = [];
-      userData.push(newUser);
-      return res
-        .status(200)
-        .send({ message: 'user registered successfully', users: userData });
+      const userData = userRepository.create(newUser);
+      return res.status(200).send({ message: 'user registered successfully', users: userData });
     } catch (error) {
-      return res
-        .status(500)
-        .send({ err: 'Server error', message: 'internal server error' });
+      return res.status(500).send({ err: 'Server error', message: 'internal server error' });
     }
   }
 
@@ -108,13 +87,9 @@ class User {
       }
       userData.push(updatedUser);
 
-      return res
-        .status(200)
-        .send({ message: 'user updated successfully', data: userData });
+      return res.status(200).send({ message: 'user updated successfully', data: userData });
     } catch (error) {
-      return res
-        .status(500)
-        .send({ err: 'Server Error', message: 'Something went wrong' });
+      return res.status(500).send({ err: 'Server Error', message: 'Something went wrong' });
     }
   }
 
@@ -135,11 +110,24 @@ class User {
         deleted_User: toDeleteUser,
       });
     } catch (error) {
-      return res
-        .status(500)
-        .send({ err: 'server error', message: 'Something went Wrong' });
+      return res.status(500).send({ err: 'server error', message: 'Something went Wrong' });
+    }
+  }
+
+  // Create JWT token -----
+  createToken(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id, email } = req.body;
+      const token = jwt.sign({ id, email }, config.secret, { expiresIn: '10h' });
+      return res.status(200).send({
+        message: 'token successfully created',
+        data: { token },
+        status: 200,
+      });
+    } catch (error) {
+      return res.status(500).send({ err: 'Server Error', message: 'Something went wrong' });
     }
   }
 }
 
-export default new User();
+export default new UserController();

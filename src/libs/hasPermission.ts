@@ -17,7 +17,7 @@ export default function hasPermission(
   }
   if (!permission[type].includes(role)) {
     console.log(
-      `\n(2) ${role}do not have permission to ${type} permission for the module ${module}`
+      `\n(2) ${role} do not have permission to ${type} permission for the module ${module}`
     );
     return false;
   }
