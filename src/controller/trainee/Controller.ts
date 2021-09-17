@@ -119,21 +119,21 @@ class Trainee {
   }
   
   // Create JWT token -----
-  createToken(req: Request, res: Response, next: NextFunction) {
-    try {
-      console.log('hello');
-      const token = jwt.sign(req.body, config.secret, { expiresIn: '10h' });
-      return res.status(200).send({
-        message: 'token successfully created',
-        data: { token },
-        status: 200,
-      });
-    } catch (error) {
-      return res
-        .status(500)
-        .send({ err: 'Server Error', message: 'Something went wrong' });
-    }
-  }
+  // createToken(req: Request, res: Response, next: NextFunction) {
+  //   try {
+  //     console.log('hello');
+  //     const token = jwt.sign(req.body, config.secret, { expiresIn: '10h' });
+  //     return res.status(200).send({
+  //       message: 'token successfully created',
+  //       data: { token },
+  //       status: 200,
+  //     });
+  //   } catch (error) {
+  //     return res
+  //       .status(500)
+  //       .send({ err: 'Server Error', message: 'Something went wrong' });
+  //   }
+  // }
 }
 
 export default new Trainee();

@@ -3,15 +3,15 @@ import UserRepository from '../../repositories/user/UserRepository';
 import config from '../../config/configuration';
 import hasPermission from '../hasPermission';
 
+const userRepository: UserRepository = new UserRepository();
 const authMiddleware = (module, permissionType) => async (req, res, next) => {
   const token = req.header('Authorization');
-
   if (!token) {
     next({ err: 'Unauthorized', message: 'Token not found', status: 403 });
   }
-
-  const { secret } = config;
+  
   let user;
+  const { secret } = config;
   try {
     user = jwt.verify(token, secret);
   } catch (err) {
@@ -22,20 +22,7 @@ const authMiddleware = (module, permissionType) => async (req, res, next) => {
     });
   }
 
-  console.log('user is..auth=>', user);
-
   if (!user) {
-    next({
-      err: 'Unauthorized',
-      message: 'User not Authorized to access',
-      status: 403,
-    });
-  }
-  const userRepository: UserRepository = new UserRepository();
-  const userData = await userRepository.findOne({});
-  console.log('++++++====>>> Auth', userData);
-
-  if (!userData) {
     next({
       error: 'unauthorized',
       message: 'permission denied!!',
@@ -43,7 +30,16 @@ const authMiddleware = (module, permissionType) => async (req, res, next) => {
     });
   }
 
-  if (!hasPermission(module, user.role, permissionType)) {
+  const userData = await userRepository.findOne({ _id: user.id });
+  if (!userData) {
+    next({
+      err: 'Unauthorized',
+      message: 'User not Authorized to access',
+      status: 403,
+    });
+  }
+
+  if (!hasPermission(module, userData.role, permissionType)) {
     next({
       error: 'Unauthorized',
       message: 'Permission denied',
