@@ -1,16 +1,15 @@
 import VersionableSchema from '../versionable/VersionableSchema';
 
-class UserSchema extends VersionableSchema {
+export default class UserSchema extends VersionableSchema {
   constructor(collections: any) {
     const baseSchema = {
-      _id: { type: String },
-      name: { type: String },
+      _id: String,
+      name: String,
       email: { type: String, required: true },
-      password: { type: String },
-      role: { type: String },
+      password: String,
+      role: String,
     };
+
     super(baseSchema, collections);
   }
 }
-
-export default UserSchema;
