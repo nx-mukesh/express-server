@@ -1,139 +1,95 @@
 import { Request, Response, NextFunction } from 'express';
 import * as jwt from 'jsonwebtoken';
 import config from '../../config/configuration';
+import TraineeRepository from '../../repositories/trainee/TraineeRepository';
 
-class Trainee {
-  getTrainee(req: Request, res: Response, next: NextFunction) {
+const traineeRepository: TraineeRepository = new TraineeRepository();
+
+class TraineeController {
+  // ================ GET TRAINEE ===============================
+  async get(req: Request, res: Response, next: NextFunction) {
     try {
-      const trainee = [
-        {
-          _id: 1,
-          name: 'Mukesh',
-          address: 'Noida',
-          role: 'SD1',
-        },
-        {
-          _id: 2,
-          name: 'Rajeev',
-          address: 'New Delhi',
-          role: 'HR',
-        },
-        {
-          _id: 3,
-          name: 'Narayan Murti',
-          address: 'Bengaluru',
-          role: 'HOD',
-        },
-      ];
-      return res
-        .status(200)
-        .send({ message: 'User Fetched Successfully', data: trainee });
-    } catch (error) {
-      return res.status(500).send({ err: error, message: 'error' });
-    }
-  }
-  // adding new trainee data (POST)
-  addTrainee(req: Request, res: Response, next: NextFunction) {
-    try {
-      const data = [];
-      const newTrainee = {
-        _id: req.body._id ? req.body._id : Math.floor(Math.random() * 100),
-        name: req.body.name,
-        email:req.body.email,
-        address: req.body.address,
-        role: req.body.role,
-      };
-      if (!newTrainee) {
-        return res
-          .status(400)
-          .send({ error: 'error', message: 'trainee data required' });
+      const token = req.header('Authorization');
+      if (!token) {
+        return next({ err: 'Unauthorized', message: 'Token not found', status: 403 });
       }
-      data.push(newTrainee);
+      const { secret } = config;
+      let trainee = jwt.verify(token, secret);
+      if (!trainee) {
+        return next({ err: 'Unauthorized', message: 'You are not allowed', status: 403 });
+      }
+      const traineeData = await traineeRepository.find({ deletedAt: null });
       return res.status(200).send({
-        status: 200,
-        message: 'Data added successfully',
-        new_data: data,
+        message: 'trainee data fetched successfully',
+        data: traineeData,
       });
     } catch (error) {
-      return res.status(500).send({ err: error, message: 'error' });
+      return res.status(500).send({ err: error, message: 'Something went wrong..!!' });
     }
   }
 
-  // update record - put request ()
-  editTrainee(req: Request, res: Response, next: NextFunction) {
+  //=============== CREATE TRAINEE BY ID ========================
+  async create(req: Request, res: Response, next: NextFunction) {
     try {
-      const data = [];
-      const traineeData = {
+      const newTrainee = {
         id: req.body.id,
         name: req.body.name,
-        address: req.body.address,
-        role: req.body.role,
+        email: req.body.email,
+        password: req.body.password,  
+        role: req.body.role ? req.body.role : 'trainee',
       };
-
-      if (!traineeData) {
-        return res
-          .status(400)
-          .send({ error: 'error', message: 'data required' });
+      const { id, email } = req.body;
+      if (!id) {
+        return next({
+          err: 'Bad Request',
+          message: 'Id is required',
+          status: 400,
+        });
       }
-      data.push(traineeData);
-      return res
-        .status(200)
-        .send({ message: 'record updated', updatedData: data });
+      if (!email) {
+        return next({
+          err: 'Bad Request',
+          message: 'email is required',
+          status: 400,
+        });
+      }
+      const newTraineeData = await traineeRepository.create(newTrainee);
+      return res.status(200).send({ message: 'trainee registered successfully', Trainee: newTraineeData });
     } catch (error) {
-      return res.status(500).send({ err: error, message: 'error' });
+      return res.status(500).send({ err: 'Server error', message: 'internal server error' });
     }
   }
 
-  // delete request
-  deleteTrainee(req: Request, res: Response, next: NextFunction) {
+  //================ UPDATE EXISTING TRAINEE BY ID ======================
+  async update(req: Request, res: Response, next: NextFunction) {
     try {
-      const trainee = [
-        {
-          id: '1',
-          name: 'Mukesh',
-          address: 'Noida',
-          role: 'SD1',
-        },
-        {
-          id: '2',
-          name: 'Rajeev',
-          address: 'New Delhi',
-          role: 'HR',
-        },
-        {
-          id: '3',
-          name: 'Narayan Murti',
-          address: 'Bengaluru',
-          role: 'HOD',
-        },
-      ];
       const Id = req.params.id;
-      const data = trainee.find((item) => item.id === Id);
-
+      const traineeData = await traineeRepository.findOne({ _id: Id });
+      if (!traineeData) {
+        next({ err: 'trainee Not exist', status: 404 });
+      }
+      const updateTrainee = await traineeRepository.update(traineeData);
       return res
         .status(200)
-        .send({ message: 'data deleted successfully', deleted: data });
+        .send({ message: 'trainee updated successfully', updateTrainee: updateTrainee });
     } catch (error) {
-      return res.status(500).send({ err: error, message: 'error' });
+      return res.status(500).send({ err: 'Server Error', message: 'Something went wrong' });
     }
   }
-  
-  // Create JWT token -----
-  // createToken(req: Request, res: Response, next: NextFunction) {
-  //   try {
-  //     console.log('hello');
-  //     const token = jwt.sign(req.body, config.secret, { expiresIn: '10h' });
-  //     return res.status(200).send({
-  //       message: 'token successfully created',
-  //       data: { token },
-  //       status: 200,
-  //     });
-  //   } catch (error) {
-  //     return res
-  //       .status(500)
-  //       .send({ err: 'Server Error', message: 'Something went wrong' });
-  //   }
-  // }
+
+  //=================== DELETE TRAINEE BY ID ==================
+  async delete(req: Request, res: Response, next: NextFunction) {
+    try {
+      const Id = req.params.id;
+      const traineeData = await traineeRepository.delete({ _id: Id });
+      return res.status(200).send({
+        message: 'Trainee deleted successfully',
+        deleted_data: traineeData,
+      });
+    } catch (error) {
+      return res.status(500).send({ err: 'server error', message: 'Something went Wrong' });
+    }
+  }
 }
 
-export default new Trainee();
+export default new TraineeController();

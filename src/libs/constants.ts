@@ -5,7 +5,7 @@ export const TRAINEE: string = 'trainee';
 export const USER: string = 'user';
 export const TRAINER: string = 'trainer';
 export const HEAD_TRAINER: string = 'head-trainer';
-export const BCRYPT_SALT_ROUNDS: number = 10;
+export const BCRYPT_SALT_ROUNDS: number = 8;
 
 export const permissions: any = {
   [TRAINEES]: {
@@ -17,3 +17,22 @@ export const permissions: any = {
     read: [TRAINEE, TRAINER, HEAD_TRAINER],
   },
 };
+
+
+
+
+// Initial User data
+export const initData = [
+  {
+    name: 'Raj',
+    email: 'raj@gmail.com',
+    role: 'trainee',
+    password: 'raj@123',
+  },
+  {
+    name: 'Marry',
+    email: 'marry@gmail.com',
+    role: 'trainer',
+    password: 'marry@123',
+  },
+];

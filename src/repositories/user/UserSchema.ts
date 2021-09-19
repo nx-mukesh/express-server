@@ -1,4 +1,5 @@
 import VersionableSchema from '../versionable/VersionableSchema';
+import { userSchema } from './UserModel';
 
 export default class UserSchema extends VersionableSchema {
   constructor(collections: any) {
@@ -13,3 +14,7 @@ export default class UserSchema extends VersionableSchema {
     super(baseSchema, collections);
   }
 }
+
+// export default new userSchema({
+//   collection: 'user',
+// });
