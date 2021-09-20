@@ -116,7 +116,7 @@ class UserController {
         next({ err: 'User Not exist', status: 404 });
       }
       const updateUser = await userRepository.update(userData);
-      return res.status(200).send({ message: 'user updated successfully', updateUser: updateUser });
+      return res.status(200).send({ message: 'user updated successfully', UserData: updateUser });
     } catch (error) {
       return res.status(500).send({ err: 'Server Error', message: 'Something went wrong' });
     }

@@ -44,10 +44,13 @@ export default class VersionableRepository<I extends Document, M extends Model<I
     projection?: any,
     options?: any
   ): Query<EnforceDocument<I, {}>[], EnforceDocument<I, {}>> {
+    const { skip = 0, limit = 10, sortBy = '-createdAt' } = query;
     const finalQuery = { deletedAt: undefined, ...query };
     const findData = this.model.find(finalQuery, projection, options);
     console.log(findData);
-    return this.model.find(finalQuery, projection, options);
+    return this.model
+      .find(finalQuery, projection, { skip: +skip, limit: +limit })
+      .sort(`-${sortBy}`);
   }
 
   /**
@@ -84,8 +87,8 @@ export default class VersionableRepository<I extends Document, M extends Model<I
    * @returns deleted date
    */
   protected softDelete(filter, data): Query<any, EnforceDocument<I, {}>> {
-    console.log('softdelete', filter);
-    console.log('softdelete', data);
+    console.log('softDelete', filter);
+    console.log('softDelete', data);
     return this.model.updateOne(filter, data);
   }
 
@@ -93,7 +96,7 @@ export default class VersionableRepository<I extends Document, M extends Model<I
    * @description Update previous data
    */
   protected async update(data: any): Promise<I> {
-    // console.log('UserRepository:: Update - data', data);
+    console.log('UserRepository:: Update - data', data);
     const previousRecord = await this.findOne({ originalId: data.originalId });
     console.log('previous record', JSON.stringify(previousRecord, undefined, 2));
     if (previousRecord) {
@@ -110,9 +113,9 @@ export default class VersionableRepository<I extends Document, M extends Model<I
     const model = new this.model(newData);
     return model.save();
   }
-  public findUser(value1, value2, role) {
-    return this.model.find(role, undefined, { skip: +value1, limit: +value2 }, (error) => {
-      console.log('error');
-    });
-  }
+  // public findUser(value1, value2, role) {
+  //   return this.model.find(role, undefined, { skip: +value1, limit: +value2 }, (error) => {
+  //     console.log('error');
+  //   });
+  // }
 }
