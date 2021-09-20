@@ -151,6 +151,22 @@ class UserController {
   }
 
   /**
+   * @description Login method create token
+   * @param req 
+   * @param res 
+   * @param next 
+   * @returns token
+   */
+  public async login(req: Request, res: Response, next: NextFunction){
+    const {email, password} = req.body;
+    const user = userRepository.findOneData(email);
+    if(!user){
+      return next({ status: 404, error:"bad request", message:"User Not found",})
+    }
+   
+  }
+
+  /**
    * @description Create Token BY ID and Email
    * @param req
    * @param res
@@ -170,6 +186,7 @@ class UserController {
       return res.status(500).send({ err: 'Server Error', message: 'Something went wrong' });
     }
   }
+
 }
 
 export default new UserController();

@@ -148,6 +148,8 @@ class TraineeController {
     }
   }
 
+  
+
 }
 
 export default new TraineeController();
