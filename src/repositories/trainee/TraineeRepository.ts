@@ -13,15 +13,15 @@ export default class TraineeRepository extends VersionableRepository<ITraineeMod
     return String(new Types.ObjectId());
   }
 
-  public findOne(query): Query<ITraineeModel, ITraineeModel> {
+  public findOneData(query):Query<ITraineeModel, ITraineeModel> {
     return super.findOne(query).lean();
   }
 
-  public find(query, projection?: any, option?: any): Query<ITraineeModel[], ITraineeModel> {
+  public findData(query, projection?: any, option?: any):Query<ITraineeModel[], ITraineeModel> {
     return super.find(query, projection, option);
   }
 
-  public count(): Query<number, ITraineeModel> {
+  public countData():Query<number, ITraineeModel> {
     return super.count();
   }
 

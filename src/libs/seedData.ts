@@ -6,7 +6,7 @@ const userRepository: UserRepository = new UserRepository();
 
 const seedData = async () => {
   try {
-    const result = await userRepository.count();
+    const result = await userRepository.countData();
     console.log('result', typeof result);
     if (result === 0) {
       console.log('data seeding in progress...');

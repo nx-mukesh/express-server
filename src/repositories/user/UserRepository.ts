@@ -1,4 +1,3 @@
-// import * as mongoose from 'mongoose';
 import { Query, Model, UpdateQuery, Types } from 'mongoose';
 import { userModel } from './UserModel';
 import IUserModel from './IUserModel';
@@ -13,15 +12,16 @@ class UserRepository extends VersionableRepository<IUserModel, Model<IUserModel>
     return String(new Types.ObjectId());
   }
 
-  public findOne(query): Query<IUserModel, IUserModel> {
-    return super.findOne(query).lean();
+  public findOneData(query): Query<IUserModel, IUserModel> {
+    console.log('In user repo-findOne Query', { query });
+    return super.findOne(query);
   }
 
-  public find(query, projection?: any, option?: any): Query<IUserModel[], IUserModel> {
+  public findData(query, projection?: any, option?: any): Query<IUserModel[], IUserModel> {
     return super.find(query, projection, option);
   }
 
-  public count(): Query<number, IUserModel> {
+  public countData(): Query<number, IUserModel> {
     return super.count();
   }
 

@@ -31,6 +31,12 @@ router
     authMiddleware(TRAINEES, 'delete'),
     validationHandler(validation.delete),
     traineeController.delete
-  );
+  )
+  .get(
+    '/getAll',
+    authMiddleware(TRAINEES, 'read'),
+    validationHandler(validation.get),
+    traineeController.getAll
+  )
 
 export default router;

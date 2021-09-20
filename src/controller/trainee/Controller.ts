@@ -6,9 +6,17 @@ import TraineeRepository from '../../repositories/trainee/TraineeRepository';
 const traineeRepository: TraineeRepository = new TraineeRepository();
 
 class TraineeController {
-  // ================ GET TRAINEE ===============================
+  /**
+   * @description: Get Trainee data based on Token
+   * @param req
+   * @param res
+   * @param next
+   * @returns One trainee data
+   */
   async get(req: Request, res: Response, next: NextFunction) {
     try {
+      const {skip = 0, limit = 10} = req.query
+      const role = {role:"trainee"};
       const token = req.header('Authorization');
       if (!token) {
         return next({ err: 'Unauthorized', message: 'Token not found', status: 403 });
@@ -18,17 +26,26 @@ class TraineeController {
       if (!trainee) {
         return next({ err: 'Unauthorized', message: 'You are not allowed', status: 403 });
       }
-      const traineeData = await traineeRepository.find({ deletedAt: null });
+      const traineeCount = await traineeRepository.countData()
+      const traineeData = await traineeRepository.findData({ skip, limit, role });
+      const data = [{traineeCount, traineeData}]
       return res.status(200).send({
         message: 'trainee data fetched successfully',
-        data: traineeData,
+        data: data,
       });
     } catch (error) {
       return res.status(500).send({ err: error, message: 'Something went wrong..!!' });
     }
   }
-
-  //=============== CREATE TRAINEE BY ID ========================
+  
+  
+  /**
+   * @description CREATE TRAINEE BY ID
+   * @param req 
+   * @param res 
+   * @param next 
+   * @returns New Trainee data
+   */
   async create(req: Request, res: Response, next: NextFunction) {
     try {
       const newTrainee = {
@@ -60,11 +77,17 @@ class TraineeController {
     }
   }
 
-  //================ UPDATE EXISTING TRAINEE BY ID ======================
+  /**
+   * @description Update Trainee Data
+   * @param req 
+   * @param res 
+   * @param next 
+   * @returns Updated Result
+   */
   async update(req: Request, res: Response, next: NextFunction) {
     try {
       const Id = req.params.id;
-      const traineeData = await traineeRepository.findOne({ _id: Id });
+      const traineeData = await traineeRepository.findOneData({ _id: Id });
       if (!traineeData) {
         next({ err: 'trainee Not exist', status: 404 });
       }
@@ -77,7 +100,13 @@ class TraineeController {
     }
   }
 
-  //=================== DELETE TRAINEE BY ID ==================
+  /**
+   * @description Soft delete Trainee data
+   * @param req 
+   * @param res 
+   * @param next 
+   * @returns 
+   */
   async delete(req: Request, res: Response, next: NextFunction) {
     try {
       const Id = req.params.id;
@@ -90,6 +119,35 @@ class TraineeController {
       return res.status(500).send({ err: 'server error', message: 'Something went Wrong' });
     }
   }
+
+  /**
+   * @description GET ALL TRAINEE ARRAY
+   * @param req 
+   * @param res 
+   * @param next 
+   * @returns array of trainee data
+   */
+  async getAll(req: Request, res: Response, next: NextFunction) {
+    try {
+      const token = req.header('Authorization');
+      if (!token) {
+        return next({ err: 'Unauthorized', message: 'Token not found', status: 403 });
+      }
+      const { secret } = config;
+      let trainee = jwt.verify(token, secret);
+      if (!trainee) {
+        return next({ err: 'Unauthorized', message: 'You are not allowed', status: 403 });
+      }
+      const traineeData = await traineeRepository.findData({ _id:trainee.id });
+      return res.status(200).send({
+        message: 'trainee data fetched successfully',
+        data: traineeData,
+      });
+    } catch (error) {
+      return res.status(500).send({ err: error, message: 'Something went wrong..!!' });
+    }
+  }
+
 }
 
 export default new TraineeController();

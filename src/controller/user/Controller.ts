@@ -6,17 +6,23 @@ import * as jwt from 'jsonwebtoken';
 const userRepository: UserRepository = new UserRepository();
 
 class UserController {
-  // ================ GET USER ===========================
-  async get(req: Request, res: Response, next: NextFunction) {
+  /**
+   * @description: Get User data based on Token
+   * @param req
+   * @param res
+   * @param next
+   * @returns
+   */
+  public async get(req: Request, res: Response, next: NextFunction) {
     try {
       const token = req.header('Authorization');
       if (!token) {
         return next({ err: 'Unauthorized', message: 'Token not found', status: 403 });
       }
       const { secret } = config;
-      let user;
-      user = await jwt.verify(token, secret);
-      const userData = await userRepository.findOne({ _id: user.id });
+      let user = await jwt.verify(token, secret);
+      console.log('In userController-- user', user);
+      const userData = await userRepository.findOneData({ _id: user._id });
       return res.status(200).send({
         message: 'user data fetched successfully',
         data: userData,
@@ -26,18 +32,51 @@ class UserController {
     }
   }
 
-  //=================  CREATE USER ===============================
-  async create(req: Request, res: Response, next: NextFunction) {
+  /**
+   * Get All Users data
+   * @param req
+   * @param res
+   * @param next
+   * @
+   * @returns Users
+   */
+  public async getAll(req: Request, res: Response, next: NextFunction) {
+    try {
+      const token = req.header('Authorization');
+      if (!token) {
+        return next({ err: 'Unauthorized', message: 'Token not found', status: 403 });
+      }
+      const { secret } = config;
+      let user = await jwt.verify(token, secret);
+      console.log('In userController-- user', user);
+      const userData = await userRepository.findData({ deletedAt: null });
+      return res.status(200).send({
+        message: 'user data fetched successfully',
+        data: userData,
+      });
+    } catch (error) {
+      return res.status(500).send({ err: error, message: 'Something went wrong..!!' });
+    }
+  }
+  /**
+   * @description Create New User
+   * @param req
+   * @param res
+   * @param next
+   * @returns Created NewUser Data
+   */
+  public async create(req: Request, res: Response, next: NextFunction) {
     try {
       const newUser = {
-        id: req.body.id,
+        _id: req.body._id,
         name: req.body.name,
         email: req.body.email,
         password: req.body.password,
         role: req.body.role ? req.body.role : 'trainee',
       };
-      const { id, email } = req.body;
-      if (!id) {
+      console.log({ newUser });
+      const { _id, email, password } = req.body;
+      if (!_id) {
         return next({
           err: 'Bad Request',
           message: 'Id is required',
@@ -51,19 +90,33 @@ class UserController {
           status: 400,
         });
       }
+      if (!password) {
+        return next({
+          err: 'Bad Request',
+          message: 'Password is required',
+          status: 400,
+        });
+      }
       const userData = await userRepository.create(newUser);
+      console.log('userData-', { userData });
       return res.status(200).send({ message: 'user registered successfully', users: userData });
     } catch (error) {
-      return res.status(500).send({ err: 'Server error', message: 'internal server error' });
+      return res.status(500).send({ err: 'Server error', message: 'Internal server error' });
     }
   }
 
-  //=========== UPDATE USER BY ID =======================
-  async update(req: Request, res: Response, next: NextFunction) {
+  /**
+   * @description Update Existing User Data BY ID
+   * @param req
+   * @param res
+   * @param next
+   * @returns Updated user data
+   */
+  public async update(req: Request, res: Response, next: NextFunction) {
     const userData = [];
     try {
       const Id = req.params.id;
-      const userData = await userRepository.findOne({ _id: Id });
+      const userData = await userRepository.findOneData({ _id: Id });
       if (!userData) {
         next({ err: 'User Not exist', status: 404 });
       }
@@ -74,11 +127,20 @@ class UserController {
     }
   }
 
-  //================= DELETE USER BY ID ===============================
-  async delete(req: Request, res: Response, next: NextFunction) {
+  /**
+   * @description Delete User Data by respected ID
+   * @param req
+   * @param res
+   * @param next
+   * @returns SoftDeleted Data
+   */
+  public async delete(req: Request, res: Response, next: NextFunction) {
     try {
       const Id = req.params.id;
-      const userData = await userRepository.delete({ _id: Id });
+      const findUser = await userRepository.findOneData({ _id: Id });
+      console.log('findFor delete in User controller', { findUser });
+      const userData = await userRepository.delete(findUser);
+      console.log('deleteData in User controller', { userData });
       return res.status(200).send({
         message: 'user deleted successfully',
         deleted_User: userData,
@@ -88,11 +150,17 @@ class UserController {
     }
   }
 
-  //================== CREATE TOKEN WITH ID AND EMAIL ====================================
-  async createToken(req: Request, res: Response, next: NextFunction) {
+  /**
+   * @description Create Token BY ID and Email
+   * @param req
+   * @param res
+   * @param next
+   * @returns New JWT Token
+   */
+  public async createToken(req: Request, res: Response, next: NextFunction) {
     try {
       const { id, email } = req.body;
-      const token = await jwt.sign({ id, email }, config.secret, { expiresIn: '15m' });
+      const token = await jwt.sign(req.body, config.secret, { expiresIn: '2h' });
       return res.status(200).send({
         message: 'token successfully created',
         data: { token },

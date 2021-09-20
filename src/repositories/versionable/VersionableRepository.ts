@@ -15,10 +15,11 @@ export default class VersionableRepository<I extends Document, M extends Model<I
 
   // FIND-ONE ==============================
   protected findOne(query: any): Query<EnforceDocument<I, {}>, EnforceDocument<I, {}>, {}, I> {
-    console.log('Query in findOne::', query);
-    const finalQuery = { deletedAt: null, ...query };
-    const findOneData = this.model.findOne(finalQuery);
-    console.log(findOneData);
+    console.log('Query for findOne in versionable::', query);
+    const finalQuery = { deletedAt: undefined, ...query };
+    const findOneData = this.model.findOne(finalQuery).lean();
+    // console.log("in versionRepo- final", finalQuery);
+    // console.log("in versionRepo- final", findOneData);
     return this.model.findOne(finalQuery).lean();
   }
 
@@ -42,7 +43,7 @@ export default class VersionableRepository<I extends Document, M extends Model<I
 
   // CREATE-DATA ==========================
   protected create(data: any): Promise<I> {
-    console.log('UserRepository :: create data', data);
+    console.log('versionableRepository :: create data', data);
     const id = VersionableRepository.generateObjectId();
     console.log({ id });
     const hash = bcrypt.hashSync(data.password, BCRYPT_SALT_ROUNDS);
@@ -52,6 +53,8 @@ export default class VersionableRepository<I extends Document, M extends Model<I
       originalId: id,
       ...data,
     });
+    console.log({data})
+    console.log({model})
     return model.save();
   }
 
@@ -62,8 +65,9 @@ export default class VersionableRepository<I extends Document, M extends Model<I
 
   // UPDATE =================================
   protected async update(data: any): Promise<I> {
-    console.log('UserRepository:: Update - data', data);
+    // console.log('UserRepository:: Update - data', data);
     const previousRecord = await this.findOne({ originalId: data.originalId });
+    console.log("previous record", JSON.stringify(previousRecord, null, 2))
     if (previousRecord) {
       await this.softDelete(
         { originalId: data.originalId, deleteAt: null },
@@ -77,5 +81,10 @@ export default class VersionableRepository<I extends Document, M extends Model<I
     delete newData.deletedAt;
     const model = new this.model(newData);
     return model.save();
+  }
+  public findUser(value1, value2, role) {
+    return this.model.find(role, undefined, { skip: +value1, limit: +value2 }, (error) => {
+      console.log('error'); 
+    });
   }
 }
