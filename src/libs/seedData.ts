@@ -1,6 +1,4 @@
 import UserRepository from '../repositories/user/UserRepository';
-import { BCRYPT_SALT_ROUNDS, initData } from './constants';
-import bcrypt from 'bcrypt';
 
 const userRepository: UserRepository = new UserRepository();
 
@@ -11,12 +9,21 @@ const seedData = async () => {
     if (result === 0) {
       console.log('data seeding in progress...');
 
-      initData.map(async (val) => {
-        
-        const { password } = val;
-        val.password = await bcrypt.hash(password, BCRYPT_SALT_ROUNDS);
-        userRepository.create(val);
-      });
+      // Initial User data
+      const initialData = [
+        {
+          name: 'Raj',
+          email: 'raj@gmail.com',
+          role: 'trainee',
+          password: 'raj@123',
+        },
+        {
+          name: 'Marry',
+          email: 'marry@gmail.com',
+          role: 'trainer',
+          password: 'marry@123',
+        },
+      ];
     }
   } catch (err) {
     console.log(err);

@@ -1,80 +1,108 @@
 // import * as mongoose from 'mongoose';
-import { Query, EnforceDocument, Document, Model, Types } from 'mongoose';
+import { Query, EnforceDocument, Document, Model, Types, UpdateWriteOpResult } from 'mongoose';
 import { BCRYPT_SALT_ROUNDS } from '../../libs/constants';
 import * as bcrypt from 'bcrypt';
+import { idText } from 'typescript';
+// import { isNull } from 'util';
 
 export default class VersionableRepository<I extends Document, M extends Model<I>> {
   private model: M;
   constructor(model) {
     this.model = model;
   }
-  // Static GenerateObjectId ===============
+  /**
+   * @description Generate Object ID
+   * @returns objectID
+   */
   protected static generateObjectId() {
     return String(new Types.ObjectId());
   }
 
-  // FIND-ONE ==============================
+  /**
+   *
+   * @param query
+   * @returns one Document
+   */
   protected findOne(query: any): Query<EnforceDocument<I, {}>, EnforceDocument<I, {}>, {}, I> {
     console.log('Query for findOne in versionable::', query);
     const finalQuery = { deletedAt: undefined, ...query };
-    const findOneData = this.model.findOne(finalQuery).lean();
-    // console.log("in versionRepo- final", finalQuery);
-    // console.log("in versionRepo- final", findOneData);
+    // const findOneData = this.model.findOne(finalQuery).lean();
+    // console.log('in versionRepo- final', finalQuery);
+    // console.log('in versionRepo- final', findOneData);
     return this.model.findOne(finalQuery).lean();
   }
 
-  // FIND ALL ==============================
+  /**
+   * @description Find documents
+   * @param query
+   * @param projection
+   * @param options
+   * @returns Array of Documents
+   */
   protected find(
     query,
     projection?: any,
     options?: any
   ): Query<EnforceDocument<I, {}>[], EnforceDocument<I, {}>> {
-    const finalQuery = { deletedAt: null, ...query };
+    const finalQuery = { deletedAt: undefined, ...query };
     const findData = this.model.find(finalQuery, projection, options);
     console.log(findData);
     return this.model.find(finalQuery, projection, options);
   }
 
-  // COUNT ================================
+  /**
+   * @description count Documents
+   * @returns Numbers
+   */
   protected count(): Query<number, EnforceDocument<I, {}>, {}, I> {
-    const finalQuery = { deletedAt: null };
+    const finalQuery = { deletedAt: undefined };
     return this.model.count(finalQuery);
   }
 
-  // CREATE-DATA ==========================
+  /**
+   * @description create new Document
+   * @param data
+   */
   protected create(data: any): Promise<I> {
     console.log('versionableRepository :: create data', data);
     const id = VersionableRepository.generateObjectId();
     console.log({ id });
-    const hash = bcrypt.hashSync(data.password, BCRYPT_SALT_ROUNDS);
-    data.password = hash;
     const model = new this.model({
       _id: id,
       originalId: id,
       ...data,
     });
-    console.log({data})
-    console.log({model})
+    console.log({ data });
+    console.log({ model });
     return model.save();
   }
 
-  // SOFT-DELETE ===========================
+  /**
+   * @description Soft Delete
+   * @param filter
+   * @param data
+   * @returns deleted date
+   */
   protected softDelete(filter, data): Query<any, EnforceDocument<I, {}>> {
+    console.log('softdelete', filter);
+    console.log('softdelete', data);
     return this.model.updateOne(filter, data);
   }
 
-  // UPDATE =================================
+  /**
+   * @description Update previous data
+   */
   protected async update(data: any): Promise<I> {
     // console.log('UserRepository:: Update - data', data);
     const previousRecord = await this.findOne({ originalId: data.originalId });
-    console.log("previous record", JSON.stringify(previousRecord, null, 2))
+    console.log('previous record', JSON.stringify(previousRecord, undefined, 2));
     if (previousRecord) {
       await this.softDelete(
-        { originalId: data.originalId, deleteAt: null },
+        { originalId: data.originalId, deleteAt: undefined },
         { deletedAt: Date.now() }
       );
     } else {
-      return null;
+      return undefined;
     }
     const newData = { ...previousRecord, ...data };
     newData._id = VersionableRepository.generateObjectId();
@@ -84,7 +112,7 @@ export default class VersionableRepository<I extends Document, M extends Model<I
   }
   public findUser(value1, value2, role) {
     return this.model.find(role, undefined, { skip: +value1, limit: +value2 }, (error) => {
-      console.log('error'); 
+      console.log('error');
     });
   }
 }

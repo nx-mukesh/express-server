@@ -15,20 +15,20 @@ class TraineeController {
    */
   async get(req: Request, res: Response, next: NextFunction) {
     try {
-      const {skip = 0, limit = 10} = req.query
-      const role = {role:"trainee"};
+      const { skip = 0, limit = 10 } = req.query;
+      const role = { role: 'trainee' };
       const token = req.header('Authorization');
       if (!token) {
         return next({ err: 'Unauthorized', message: 'Token not found', status: 403 });
       }
       const { secret } = config;
-      let trainee = jwt.verify(token, secret);
+      const trainee = jwt.verify(token, secret);
       if (!trainee) {
         return next({ err: 'Unauthorized', message: 'You are not allowed', status: 403 });
       }
-      const traineeCount = await traineeRepository.countData()
+      const traineeCount = await traineeRepository.countData();
       const traineeData = await traineeRepository.findData({ skip, limit, role });
-      const data = [{traineeCount, traineeData}]
+      const data = [{ traineeCount, traineeData }];
       return res.status(200).send({
         message: 'trainee data fetched successfully',
         data: data,
@@ -37,13 +37,12 @@ class TraineeController {
       return res.status(500).send({ err: error, message: 'Something went wrong..!!' });
     }
   }
-  
-  
+
   /**
    * @description CREATE TRAINEE BY ID
-   * @param req 
-   * @param res 
-   * @param next 
+   * @param req
+   * @param res
+   * @param next
    * @returns New Trainee data
    */
   async create(req: Request, res: Response, next: NextFunction) {
@@ -52,7 +51,7 @@ class TraineeController {
         id: req.body.id,
         name: req.body.name,
         email: req.body.email,
-        password: req.body.password,  
+        password: req.body.password,
         role: req.body.role ? req.body.role : 'trainee',
       };
       const { id, email } = req.body;
@@ -71,7 +70,9 @@ class TraineeController {
         });
       }
       const newTraineeData = await traineeRepository.create(newTrainee);
-      return res.status(200).send({ message: 'trainee registered successfully', Trainee: newTraineeData });
+      return res
+        .status(200)
+        .send({ message: 'trainee registered successfully', Trainee: newTraineeData });
     } catch (error) {
       return res.status(500).send({ err: 'Server error', message: 'internal server error' });
     }
@@ -79,9 +80,9 @@ class TraineeController {
 
   /**
    * @description Update Trainee Data
-   * @param req 
-   * @param res 
-   * @param next 
+   * @param req
+   * @param res
+   * @param next
    * @returns Updated Result
    */
   async update(req: Request, res: Response, next: NextFunction) {
@@ -102,10 +103,10 @@ class TraineeController {
 
   /**
    * @description Soft delete Trainee data
-   * @param req 
-   * @param res 
-   * @param next 
-   * @returns 
+   * @param req
+   * @param res
+   * @param next
+   * @returns
    */
   async delete(req: Request, res: Response, next: NextFunction) {
     try {
@@ -122,9 +123,9 @@ class TraineeController {
 
   /**
    * @description GET ALL TRAINEE ARRAY
-   * @param req 
-   * @param res 
-   * @param next 
+   * @param req
+   * @param res
+   * @param next
    * @returns array of trainee data
    */
   async getAll(req: Request, res: Response, next: NextFunction) {
@@ -134,11 +135,11 @@ class TraineeController {
         return next({ err: 'Unauthorized', message: 'Token not found', status: 403 });
       }
       const { secret } = config;
-      let trainee = jwt.verify(token, secret);
+      const trainee = jwt.verify(token, secret);
       if (!trainee) {
         return next({ err: 'Unauthorized', message: 'You are not allowed', status: 403 });
       }
-      const traineeData = await traineeRepository.findData({ _id:trainee.id });
+      const traineeData = await traineeRepository.findData({ _id: trainee.id });
       return res.status(200).send({
         message: 'trainee data fetched successfully',
         data: traineeData,
@@ -147,7 +148,6 @@ class TraineeController {
       return res.status(500).send({ err: error, message: 'Something went wrong..!!' });
     }
   }
-
 }
 
 export default new TraineeController();
