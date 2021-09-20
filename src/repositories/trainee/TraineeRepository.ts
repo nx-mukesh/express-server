@@ -1,40 +1,43 @@
-import * as mongoose from 'mongoose';
+// import * as mongoose from 'mongoose';
+import { Query, Model, UpdateQuery, Types } from 'mongoose';
 import { traineeModel } from './TraineeModel';
 import ITraineeModel from './ITraineeModel';
+import VersionableRepository from '../versionable/VersionableRepository';
 
-export default class TraineeRepository {
+export default class TraineeRepository extends VersionableRepository<
+  ITraineeModel,
+  Model<ITraineeModel>
+> {
+  constructor() {
+    super(traineeModel);
+  }
+  // static generate mongodb ObjectId
   public static generateObjectId() {
-    return String(new mongoose.Types.ObjectId());
+    return String(new Types.ObjectId());
   }
 
-  public findOne(query): mongoose.Query<ITraineeModel, ITraineeModel> {
-    return traineeModel.findOne(query).lean();
+  public findOneData(query): Query<ITraineeModel, ITraineeModel> {
+    return super.findOne(query).lean();
   }
 
-  public find(
-    query,
-    projection?: any,
-    option?: any
-  ): mongoose.Query<ITraineeModel[], ITraineeModel> {
-    return traineeModel.find(query, projection, option);
+  public findData(query, projection?: any, option?: any): Query<ITraineeModel[], ITraineeModel> {
+    return super.find(query, projection, option);
   }
 
-  public count(): mongoose.Query<number, ITraineeModel> {
-    return traineeModel.count();
+  public countData(): Query<number, ITraineeModel> {
+    return super.count();
   }
 
-  public create(data: any): Promise<ITraineeModel> {
-    console.log('TraineeRepository :: create data', data);
-    const id = TraineeRepository.generateObjectId();
-    const model = new traineeModel({
-      _id: id,
-      ...data,
-    });
-    return model.save();
+  public async create(data: any): Promise<ITraineeModel> {
+    return super.create(data);
   }
 
-  public update(data: any): mongoose.UpdateQuery<ITraineeModel> {
-    console.log('TraineeRepository:: Update - data', data);
-    return traineeModel.updateOne(data);
+  public delete(data): UpdateQuery<ITraineeModel> {
+    return super.softDelete({ originalId: data.originalId, deleteAt: undefined }, data.originalId);
+  }
+
+  public async update(data: any): Promise<ITraineeModel> {
+    console.log('UserRepository:: Update - data', data);
+    return super.update(data);
   }
 }

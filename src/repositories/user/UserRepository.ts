@@ -1,38 +1,42 @@
-import * as mongoose from 'mongoose';
+import { Query, Model, UpdateQuery, Types } from 'mongoose';
 import { userModel } from './UserModel';
 import IUserModel from './IUserModel';
+import VersionableRepository from '../versionable/VersionableRepository';
 
-export default class UserRepository {
+class UserRepository extends VersionableRepository<IUserModel, Model<IUserModel>> {
+  constructor() {
+    super(userModel);
+  }
   // static generate mongodb ObjectId
   public static generateObjectId() {
-    return String(new mongoose.Types.ObjectId());
+    return String(new Types.ObjectId());
   }
 
-  public findOne(query): mongoose.Query<IUserModel, IUserModel> {
-    return userModel.findOne(query).lean();
+  public findOneData(query): Query<IUserModel, IUserModel> {
+    console.log('In user repo-findOne Query', { query });
+    return super.findOne(query);
   }
 
-  public find(query, projection?: any, option?: any): mongoose.Query<IUserModel[], IUserModel> {
-    return userModel.find(query, projection, option);
+  public findData(query, projection?: any, option?: any): Query<IUserModel[], IUserModel> {
+    return super.find(query, projection, option);
   }
 
-  public count(): mongoose.Query<number, IUserModel> {
-    return userModel.count();
+  public countData(): Query<number, IUserModel> {
+    return super.count();
   }
 
   public async create(data: any): Promise<IUserModel> {
-    console.log('UserRepository :: create data', data);
-    const id = UserRepository.generateObjectId();
-    const model = await new userModel({
-      _id: id,
-      ...data,
-    });
-    console.log({ model });
-    return model.save();
+    return super.create(data);
   }
 
-  public update(data: any): mongoose.UpdateQuery<IUserModel> {
+  public delete(data): UpdateQuery<IUserModel> {
+    return super.softDelete({ originalId: data.originalId, deleteAt: undefined }, data.originalId);
+  }
+
+  public async update(data: any): Promise<IUserModel> {
     console.log('UserRepository:: Update - data', data);
-    return userModel.updateOne(data);
+    return super.update(data);
   }
 }
+
+export default UserRepository;

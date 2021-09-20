@@ -9,7 +9,7 @@ const authMiddleware = (module, permissionType) => async (req, res, next) => {
   if (!token) {
     next({ err: 'Unauthorized', message: 'Token not found', status: 403 });
   }
-  
+
   let user;
   const { secret } = config;
   try {
@@ -29,12 +29,13 @@ const authMiddleware = (module, permissionType) => async (req, res, next) => {
       status: 403,
     });
   }
-
-  const userData = await userRepository.findOne({ _id: user.id });
+  console.log('Logged user IN AuthMiddle', user._id);
+  const userData = await userRepository.findOneData({ _id: user._id });
+  console.log('inAuthMiddle', { userData });
   if (!userData) {
     next({
       err: 'Unauthorized',
-      message: 'User not Authorized to access',
+      message: 'User not Authorized to access!!',
       status: 403,
     });
   }

@@ -1,16 +1,20 @@
-import * as mongoose from 'mongoose';
+import VersionableSchema from '../versionable/VersionableSchema';
+import { userSchema } from './UserModel';
 
-class UserSchema extends mongoose.Schema {
+export default class UserSchema extends VersionableSchema {
   constructor(collections: any) {
     const baseSchema = {
-      _id: { type: String },
-      name: { type: String },
-      email: { type: String },
-      password: { type: String },
-      role: { type: String },
+      _id: String,
+      name: String,
+      email: { type: String, required: true },
+      password: String,
+      role: String,
     };
+
     super(baseSchema, collections);
   }
 }
 
-export default UserSchema;
+// export default new userSchema({
+//   collection: 'user',
+// });

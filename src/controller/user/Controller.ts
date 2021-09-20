@@ -1,22 +1,30 @@
 import { Request, Response, NextFunction } from 'express';
 import UserRepository from '../../repositories/user/UserRepository';
-// import bcrypt from 'bcrypt';
 import config from '../../config/configuration';
 import * as jwt from 'jsonwebtoken';
+import { BCRYPT_SALT_ROUNDS } from '../../libs/constants';
+import bcrypt from 'bcrypt';
 
 const userRepository: UserRepository = new UserRepository();
 
 class UserController {
-  get(req: Request, res: Response, next: NextFunction) {
+  /**
+   * @description: Get User data based on Token
+   * @param req
+   * @param res
+   * @param next
+   * @returns
+   */
+  public async get(req: Request, res: Response, next: NextFunction) {
     try {
       const token = req.header('Authorization');
       if (!token) {
         return next({ err: 'Unauthorized', message: 'Token not found', status: 403 });
       }
       const { secret } = config;
-      let user;
-      user = jwt.verify(token, secret);
-      const userData = userRepository.findOne({ _id: user.id });
+      const user = await jwt.verify(token, secret);
+      console.log('In userController-- user', user);
+      const userData = await userRepository.findOneData({ _id: user._id });
       return res.status(200).send({
         message: 'user data fetched successfully',
         data: userData,
@@ -26,24 +34,42 @@ class UserController {
     }
   }
 
-  // Create new User
-  create(req: Request, res: Response, next: NextFunction) {
+  /**
+   * Get All Users data
+   * @param req
+   * @param res
+   * @param next
+   * @
+   * @returns Users
+   */
+  public async getAll(req: Request, res: Response, next: NextFunction) {
     try {
-      const newUser = {
-        id: req.body.id,
-        name: req.body.name,
-        email: req.body.email,
-        password: req.body.password,
-        role: req.body.role ? req.body.role : 'trainee',
-      };
-      const { id, email } = req.body;
-      if (!id) {
-        return next({
-          err: 'Bad Request',
-          message: 'Id is required',
-          status: 400,
-        });
+      const token = req.header('Authorization');
+      if (!token) {
+        return next({ err: 'Unauthorized', message: 'Token not found', status: 403 });
       }
+      const { secret } = config;
+      const user = await jwt.verify(token, secret);
+      console.log('In userController-- user', user);
+      const userData = await userRepository.findData({ deletedAt: undefined });
+      return res.status(200).send({
+        message: 'user data fetched successfully',
+        data: userData,
+      });
+    } catch (error) {
+      return res.status(500).send({ err: error, message: 'Something went wrong..!!' });
+    }
+  }
+  /**
+   * @description Create New User
+   * @param req
+   * @param res
+   * @param next
+   * @returns Created NewUser Data
+   */
+  public async create(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { email, password } = req.body;
       if (!email) {
         return next({
           err: 'Bad Request',
@@ -51,64 +77,85 @@ class UserController {
           status: 400,
         });
       }
-      const userData = userRepository.create(newUser);
+      if (!password) {
+        return next({
+          err: 'Bad Request',
+          message: 'Password is required',
+          status: 400,
+        });
+      }
+      const hashPassword = bcrypt.hashSync(password, BCRYPT_SALT_ROUNDS);
+      const newUser = {
+        name: req.body.name,
+        email: req.body.email,
+        password: hashPassword,
+        role: req.body.role ? req.body.role : 'trainee',
+      };
+
+      const userData = await userRepository.create(newUser);
       return res.status(200).send({ message: 'user registered successfully', users: userData });
     } catch (error) {
-      return res.status(500).send({ err: 'Server error', message: 'internal server error' });
+      return res.status(500).send({ err: 'Server error', message: 'Internal server error' });
     }
   }
 
-  //   edit exist user data by id -
-  update(req: Request, res: Response, next: NextFunction) {
-    const userData = [];
+  /**
+   * @description Update Existing User Data BY ID
+   * @param req
+   * @param res
+   * @param next
+   * @returns Updated user data
+   */
+  public async update(req: Request, res: Response, next: NextFunction) {
     try {
-      const updatedUser = {
-        id: req.body.id ? req.body.id : Math.floor(Math.random() * 10),
-        name: req.body.name,
-        role: req.body.role,
-        address: req.body.address,
-      };
-
-      if (!updatedUser.id || !updatedUser.name || !updatedUser.role) {
-        return res.status(400).send({
-          err: 'Bad request',
-          message: 'fill all details user Details',
-        });
+      const Id = req.params.id;
+      console.log('Id====>', Id);
+      const userData = await userRepository.findOneData({ _id: Id });
+      console.log('willUpdate', userData);
+      if (!userData) {
+        next({ err: 'User Not exist', status: 404 });
       }
-      userData.push(updatedUser);
-
-      return res.status(200).send({ message: 'user updated successfully', data: userData });
+      const updateUser = await userRepository.update(userData);
+      return res.status(200).send({ message: 'user updated successfully', UserData: updateUser });
     } catch (error) {
       return res.status(500).send({ err: 'Server Error', message: 'Something went wrong' });
     }
   }
 
-  //   delete user by id -
-  delete(req: Request, res: Response, next: NextFunction) {
-    const userData = [
-      { id: '1', name: 'John Milton', role: 'Author', address: 'Washington' },
-      { id: '2', name: 'Thomas Crew', role: 'Editor', address: 'New York' },
-      { id: '3', name: 'Selena peter', role: 'Singer', address: 'Alaska' },
-    ];
+  /**
+   * @description Delete User Data by respected ID
+   * @param req
+   * @param res
+   * @param next
+   * @returns SoftDeleted Data
+   */
+  public async delete(req: Request, res: Response, next: NextFunction) {
     try {
       const Id = req.params.id;
-      const toDeleteUser = userData.find((item) => item.id === Id);
-      userData.splice(userData.indexOf(toDeleteUser), 1);
+      const findUser = await userRepository.findOneData({ _id: Id });
+      console.log('findFor delete in User controller', { findUser });
+      const userData = await userRepository.delete(findUser);
+      console.log('deleteData in User controller', { userData });
       return res.status(200).send({
         message: 'user deleted successfully',
-        data: userData,
-        deleted_User: toDeleteUser,
+        deleted_User: userData,
       });
     } catch (error) {
       return res.status(500).send({ err: 'server error', message: 'Something went Wrong' });
     }
   }
 
-  // Create JWT token -----
-  createToken(req: Request, res: Response, next: NextFunction) {
+  /**
+   * @description Create Token BY ID and Email
+   * @param req
+   * @param res
+   * @param next
+   * @returns New JWT Token
+   */
+  public async createToken(req: Request, res: Response, next: NextFunction) {
     try {
       const { id, email } = req.body;
-      const token = jwt.sign({ id, email }, config.secret, { expiresIn: '10h' });
+      const token = await jwt.sign(req.body, config.secret, { expiresIn: '10h' });
       return res.status(200).send({
         message: 'token successfully created',
         data: { token },
