@@ -157,7 +157,7 @@ class UserController {
 	public async createToken(req: Request, res: Response, next: NextFunction) {
 		try {
 			// const { id, email } = req.body;
-			const token = await jwt.sign(req.body, config.secret, { expiresIn: '10h' });
+			const token = await jwt.sign(req.body, config.secret, { expiresIn: '15m' });
 			return res.status(200).send({
 				message: 'token successfully created',
 				data: { token },
@@ -181,7 +181,9 @@ class UserController {
 			if (!user) {
 				return next({ status: 404, error: 'bad request', message: 'User Not found' });
 			}
-			const validPassword = bcrypt.compare(password, user.password);
+			const validPassword = bcrypt.compareSync(password, user.password);
+      // console.log({validPassword});
+      
 			if (!validPassword) {
 				return next({ success: false, message: 'Password not matched' });
 			}
