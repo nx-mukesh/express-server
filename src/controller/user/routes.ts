@@ -31,6 +31,12 @@ router.post(
   validationHandler(validation.create),
   UserController.create
 );
+router.post(
+  '/login',
+  // authMiddleware(USER, 'read'),
+  validationHandler(validation.create),
+  UserController.login
+);
 router.put(
   '/:id',
   authMiddleware(USER, 'read'),
