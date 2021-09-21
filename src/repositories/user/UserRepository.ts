@@ -16,8 +16,9 @@ class UserRepository extends VersionableRepository<IUserModel, Model<IUserModel>
     console.log('In user repo-findOne Query', { query });
     return super.findOne(query);
   }
-
+  
   public findData(query, projection?: any, option?: any): Query<IUserModel[], IUserModel> {
+    console.log('In user repo-find Query', { query });
     return super.find(query, projection, option);
   }
 

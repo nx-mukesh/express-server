@@ -48,6 +48,7 @@ const authMiddleware = (module, permissionType) => async (req, res, next) => {
     });
   }
   req.user = user;
+  // console.log("user in Auth", user)
   next();
 };
 export default authMiddleware;

@@ -3,7 +3,7 @@ import UserController from './Controller';
 import validationHandler from '../../libs/validationHandler';
 import authMiddleware from '../../libs/routes/authMiddleWare';
 import validation from './validation';
-import { USER } from '../../libs/constants';
+import { TRAINER, USER } from '../../libs/constants';
 
 const router = Router();
 
@@ -24,6 +24,12 @@ router.post(
   authMiddleware(USER, 'read'),
   validationHandler(validation.create),
   UserController.create
+);
+router.post(
+  '/login',
+  // authMiddleware(USER, 'read'),
+  validationHandler(validation.create),
+  UserController.login
 );
 router.put(
   '/:id',
