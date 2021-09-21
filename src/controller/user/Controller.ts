@@ -6,7 +6,6 @@ import { BCRYPT_SALT_ROUNDS } from '../../libs/constants';
 import * as bcrypt from 'bcrypt';
 
 const userRepository: UserRepository = new UserRepository();
-
 class UserController {
 	/**
 	 * @description: Get User data based on Token
@@ -44,6 +43,7 @@ class UserController {
 	 */
 	public async getAll(req: Request, res: Response, next: NextFunction) {
 		try {
+      const {skip, limit, search} = req.query;
 			const token = req.header('Authorization');
 			if (!token) {
 				return next({ err: 'Unauthorized', message: 'Token not found', status: 403 });
@@ -51,7 +51,7 @@ class UserController {
 			const { secret } = config;
 			const user = await jwt.verify(token, secret);
 			console.log('In userController-- user', user);
-			const userData = await userRepository.findData({ deletedAt: undefined });
+			const userData = await userRepository.findData({ deletedAt: undefined, skip, limit, search});
 			return res.status(200).send({
 				message: 'user data fetched successfully',
 				data: userData,
@@ -181,13 +181,12 @@ class UserController {
 			if (!user) {
 				return next({ status: 404, error: 'bad request', message: 'User Not found' });
 			}
-			const validPassword = bcrypt.compareSync(password, user.password);
-      // console.log({validPassword});
-      
+			const validPassword = bcrypt.compareSync(password, user.password);  
 			if (!validPassword) {
 				return next({ success: false, message: 'Password not matched' });
 			}
-			const token = await jwt.sign(req.body, config.secret, { expiresIn: '15m' });
+      const userCredentials = {email, password}
+			const token = await jwt.sign(userCredentials, config.secret, { expiresIn: '15m' });
 			return res.status(200).send({ success: true, message: 'login success', token: token });
 		} catch (error) {
 			return res.status(400).send({ error: error, message: 'user id or password is invalid' });

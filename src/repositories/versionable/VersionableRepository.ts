@@ -19,7 +19,6 @@ export default class VersionableRepository<I extends Document, M extends Model<I
 	}
 
 	/**
-	 *
 	 * @param query
 	 * @returns one Document
 	 */
@@ -37,18 +36,23 @@ export default class VersionableRepository<I extends Document, M extends Model<I
 	 * @returns Array of Documents
 	 */
 	protected find(query, projection?: any, options?: any): Query<EnforceDocument<I, {}>[], EnforceDocument<I, {}>> {
-		const { skip = 0, limit = 10, sortBy = '-createdAt' } = query;
-		const finalQuery = { deletedAt: undefined, ...query };
-		const findData = this.model.find(finalQuery, projection, options);
-		console.log(findData);
-		return this.model.find(finalQuery, projection, { skip: +skip, limit: +limit }).sort(`-${sortBy}`);
+		const { skip = 0, limit = 10, sortBy = '-createdAt', search = '' } = query;
+		const finalQuery: any = {
+			deletedAt: undefined,
+			$or: [
+				{ name: { $regex: new RegExp(search), $options: 'i' } },
+				{ email: { $regex: new RegExp(search), $options: 'i' } },
+			],
+		};
+		console.log('finalQuery:versionRepo', finalQuery);
+		return this.model.find(finalQuery, projection, { skip: +(skip), limit: +(limit) }).sort(`-${sortBy}`);
 	}
 
 	/**
 	 * @description count Documents
 	 * @returns Numbers
 	 */
-	protected count(): Query<number, EnforceDocument<I, {}>, {}, I> {
+	public count(): Query<number, EnforceDocument<I, {}>, {}, I> {
 		const finalQuery = { deletedAt: undefined };
 		return this.model.count(finalQuery);
 	}
@@ -101,9 +105,4 @@ export default class VersionableRepository<I extends Document, M extends Model<I
 		const model = new this.model(newData);
 		return model.save();
 	}
-	// public findUser(value1, value2, role) {
-	//   return this.model.find(role, undefined, { skip: +value1, limit: +value2 }, (error) => {
-	//     console.log('error');
-	//   });
-	// }
 }

@@ -20,12 +20,6 @@ router.get(
   UserController.getAll
 );
 router.post(
-  '/login',
-  // authMiddleware(USER, 'read'),
-  // validationHandler(validation.get),
-  UserController.login
-);
-router.post(
   '/',
   authMiddleware(USER, 'read'),
   validationHandler(validation.create),
