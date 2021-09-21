@@ -21,18 +21,4 @@ export const permissions: any = {
 
 
 
-// Initial User data
-export const initData = [
-  {
-    name: 'Raj',
-    email: 'raj@gmail.com',
-    role: 'trainee',
-    password: 'raj@123',
-  },
-  {
-    name: 'Marry',
-    email: 'marry@gmail.com',
-    role: 'trainer',
-    password: 'marry@123',
-  },
-];
+

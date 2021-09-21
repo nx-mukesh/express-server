@@ -2,6 +2,8 @@ import { Request, Response, NextFunction } from 'express';
 import UserRepository from '../../repositories/user/UserRepository';
 import config from '../../config/configuration';
 import * as jwt from 'jsonwebtoken';
+import { BCRYPT_SALT_ROUNDS } from '../../libs/constants';
+import bcrypt from 'bcrypt';
 
 const userRepository: UserRepository = new UserRepository();
 
@@ -20,7 +22,7 @@ class UserController {
         return next({ err: 'Unauthorized', message: 'Token not found', status: 403 });
       }
       const { secret } = config;
-      let user = await jwt.verify(token, secret);
+      const user = await jwt.verify(token, secret);
       console.log('In userController-- user', user);
       const userData = await userRepository.findOneData({ _id: user._id });
       return res.status(200).send({
@@ -47,9 +49,9 @@ class UserController {
         return next({ err: 'Unauthorized', message: 'Token not found', status: 403 });
       }
       const { secret } = config;
-      let user = await jwt.verify(token, secret);
+      const user = await jwt.verify(token, secret);
       console.log('In userController-- user', user);
-      const userData = await userRepository.findData({ deletedAt: null });
+      const userData = await userRepository.findData({ deletedAt: undefined });
       return res.status(200).send({
         message: 'user data fetched successfully',
         data: userData,
@@ -67,22 +69,7 @@ class UserController {
    */
   public async create(req: Request, res: Response, next: NextFunction) {
     try {
-      const newUser = {
-        _id: req.body._id,
-        name: req.body.name,
-        email: req.body.email,
-        password: req.body.password,
-        role: req.body.role ? req.body.role : 'trainee',
-      };
-      console.log({ newUser });
-      const { _id, email, password } = req.body;
-      if (!_id) {
-        return next({
-          err: 'Bad Request',
-          message: 'Id is required',
-          status: 400,
-        });
-      }
+      const { email, password } = req.body;
       if (!email) {
         return next({
           err: 'Bad Request',
@@ -97,11 +84,21 @@ class UserController {
           status: 400,
         });
       }
+      const hashPassword = bcrypt.hashSync(password, BCRYPT_SALT_ROUNDS);
+      const newUser = {
+        name: req.body.name,
+        email: req.body.email,
+        password: hashPassword,
+        role: req.body.role ? req.body.role : 'trainee',
+      };
+      console.log('New User==>', { newUser });
+
       const userData = await userRepository.create(newUser);
-      console.log('userData-', { userData });
+      console.log({ userData });
+
       return res.status(200).send({ message: 'user registered successfully', users: userData });
     } catch (error) {
-      return res.status(500).send({ err: 'Server error', message: 'Internal server error' });
+      return res.status(500).send({ err: 'Server error', message: 'Internal server error!!' });
     }
   }
 
@@ -113,15 +110,16 @@ class UserController {
    * @returns Updated user data
    */
   public async update(req: Request, res: Response, next: NextFunction) {
-    const userData = [];
     try {
       const Id = req.params.id;
+      console.log('Id====>', Id);
       const userData = await userRepository.findOneData({ _id: Id });
+      console.log('willUpdate', userData);
       if (!userData) {
         next({ err: 'User Not exist', status: 404 });
       }
       const updateUser = await userRepository.update(userData);
-      return res.status(200).send({ message: 'user updated successfully', updateUser: updateUser });
+      return res.status(200).send({ message: 'user updated successfully', UserData: updateUser });
     } catch (error) {
       return res.status(500).send({ err: 'Server Error', message: 'Something went wrong' });
     }
@@ -152,22 +150,36 @@ class UserController {
 
   /**
    * @description Login method create token
-   * @param req 
-   * @param res 
-   * @param next 
+   * @param req
+   * @param res
+   * @param next
    * @returns token
    */
-  public async login(req: Request, res: Response, next: NextFunction){
-    const {email, password} = req.body;
-    const user = userRepository.findOneData(email);
-    if(!user){
-      return next({ status: 404, error:"bad request", message:"User Not found",})
+  public async login(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { email, password } = req.body;
+      const user = await userRepository.findOneData(email);
+      console.log('user===============>', user);
+      if (!user) {
+        return next({ status: 404, error: 'bad request', message: 'User Not found' });
+      }
+      await bcrypt.compare(password, user.password, (err, res) => {
+        if (err) {
+          return next({ success: false, message: 'Password do not matched' });
+        }
+        if (res) {
+          const { secret } = config;
+          const token = jwt.sign(req.body, secret, { expireIn: '15m' });
+          return res.status(200).send({ status: 200, message: 'Login success', token: token });
+        }
+      });
+    } catch (error) {
+      return res.status(400).send({ error: error, message: 'user id or password is invalid' });
     }
-   
   }
 
   /**
-   * @description Create Token BY ID and Email
+   * @description Login by Email and Password
    * @param req
    * @param res
    * @param next
@@ -175,8 +187,8 @@ class UserController {
    */
   public async createToken(req: Request, res: Response, next: NextFunction) {
     try {
-      const { id, email } = req.body;
-      const token = await jwt.sign(req.body, config.secret, { expiresIn: '2h' });
+      // const { id, email } = req.body;
+      const token = await jwt.sign(req.body, config.secret, { expiresIn: '10h' });
       return res.status(200).send({
         message: 'token successfully created',
         data: { token },
@@ -186,7 +198,6 @@ class UserController {
       return res.status(500).send({ err: 'Server Error', message: 'Something went wrong' });
     }
   }
-
 }
 
 export default new UserController();
