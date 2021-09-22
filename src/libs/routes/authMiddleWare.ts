@@ -16,7 +16,7 @@ const authMiddleware = (module, permissionType) => async (req, res, next) => {
     user = jwt.verify(token, secret);
   } catch (err) {
     next({
-      err: 'Unauthorized',
+      err: 'Unauthorized (1)',
       message: 'User not Authorized to access..!!',
       status: 403,
     });
@@ -24,7 +24,7 @@ const authMiddleware = (module, permissionType) => async (req, res, next) => {
 
   if (!user) {
     next({
-      error: 'unauthorized',
+      error: 'unauthorized (2)',
       message: 'permission denied!!',
       status: 403,
     });
@@ -34,7 +34,7 @@ const authMiddleware = (module, permissionType) => async (req, res, next) => {
   console.log('inAuthMiddle', { userData });
   if (!userData) {
     next({
-      err: 'Unauthorized',
+      err: 'Unauthorized(3)',
       message: 'User not Authorized to access!!',
       status: 403,
     });
