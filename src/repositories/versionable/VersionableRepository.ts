@@ -52,7 +52,7 @@ export default class VersionableRepository<I extends Document, M extends Model<I
 	 * @description count Documents
 	 * @returns Numbers
 	 */
-	public count(): Query<number, EnforceDocument<I, {}>, {}, I> {
+	protected count(): Query<number, EnforceDocument<I, {}>, {}, I> {
 		const finalQuery = { deletedAt: undefined };
 		return this.model.count(finalQuery);
 	}

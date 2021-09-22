@@ -4,6 +4,10 @@ import * as morgan from 'morgan';
 import Database from './libs/Database';
 import { notFoundRoute, errorHandler } from './libs/routes';
 import router from './router';
+import { SwaggerSetup, SwaggerURL } from './config/configuration';
+import Swagger from './libs/Swagger'
+// import { SwaggerURL } from './config/configuration';
+
 
 export default class Server {
   private app: express.Express;
@@ -23,17 +27,17 @@ export default class Server {
     app.use(bodyParser.urlencoded({ extended: true }));
     app.use(bodyParser.json());
   }
-
+  
   /**
    * To setup route
    * @return - Instance of current object
    * @memberof Server
    */
-
+  
   public setupRoute() {
     const { app } = this;
     // const jsonParser = bodyParser.json();
-
+    
     app.use('/health-check', (req, res) => {
       res.status(200).send('I am OK');
     });
@@ -47,11 +51,12 @@ export default class Server {
    */
   bootstrap() {
     this.initBodyParser();
+    this.initSwagger();
     this.setupRoute();
-
+    
     return this.app;
   }
-
+  
   public async run() {
     const { port, env, mongoURL } = this.config;
     try {
@@ -59,11 +64,29 @@ export default class Server {
       this.app.listen(port, () => {
         console.log(
           `|| Server is running at PORT '${port}' in '${env}' mode ||`
-        );
-      });
-    } catch (err) {
-      console.log('Database connection error', err);
+          );
+        });
+      } catch (err) {
+        console.log('Database connection error', err);
+      }
+      return this;
     }
-    return this;
+    
+    /**
+     * @description : Init Swagger
+     */
+    private initSwagger(){
+      const {swaggerDefinition, swaggerUrl} = this.config;
+      const swaggerSetup = new Swagger();
+      
+      // JSON route
+      this.app.use(`${swaggerUrl}.json`, swaggerSetup.getRouter({
+      swaggerDefinition
+    }))
+    console.log(SwaggerURL);
+    
+    // UI route
+    const {serve, setup} = swaggerSetup.getUI(swaggerUrl);
+    this.app.use(swaggerUrl, serve, setup)
   }
 }

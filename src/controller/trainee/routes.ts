@@ -2,7 +2,7 @@ import { Router } from 'express';
 import traineeController from './Controller';
 import validationHandler from '../../libs/validationHandler';
 import authMiddleware from '../../libs/routes/authMiddleWare';
-import { TRAINEES } from '../../libs/constants';
+import { TRAINEES, TRAINER } from '../../libs/constants';
 import validation from './validation';
 
 const router = Router();
@@ -33,7 +33,7 @@ router
     traineeController.delete
   )
   .get(
-    '/getAll',
+    '/allTrainees',
     authMiddleware(TRAINEES, 'read'),
     validationHandler(validation.get),
     traineeController.getAll
