@@ -4,9 +4,8 @@ import * as morgan from 'morgan';
 import Database from './libs/Database';
 import { notFoundRoute, errorHandler } from './libs/routes';
 import router from './router';
-import { SwaggerSetup, SwaggerURL } from './config/configuration';
 import Swagger from './libs/Swagger'
-// import { SwaggerURL } from './config/configuration';
+import { SwaggerURL } from './config/configuration';
 
 
 export default class Server {

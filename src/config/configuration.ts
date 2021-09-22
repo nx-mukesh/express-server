@@ -18,12 +18,13 @@ const configuration: IConfig = Object.freeze({
 	secret: process.env.TOKEN,
 	mongoURL: process.env.MONGO_URL,
 	swaggerDefinition: {
-		baseAPI: '3.0.0',
+		openapi: '3.0.0',
 		basePath: '/api',
 		info: {
 			...SwaggerSetup,
 			version,
 		},
+		servers: [{url: 'http://localhost:9000/api'}],
 		components:{
 			securitySchema:{
 				bearerAuth: {

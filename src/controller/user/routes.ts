@@ -7,145 +7,242 @@ import { HEAD_TRAINER, USER } from '../../libs/constants';
 
 export const router = Router();
 
-/**
- * @Swagger
- * definitions:
- *  UserSchema:
- *   properties:
- *    _id:
- *     type:string
- *    id:
- *     type:string
- *    name:
- *     type:string
- *    email:
- *     type:string
- *    password:
- *     type:string
- *    role:
- *     type:string
- *    createdAt:
- *     type:string
- *    deletedAt:
- *     type:string
- *  users:
- *   type:array
- *    $items:
- *     ref:'#/definitions/UserSchema'
- *  User:
- *   type:object
- *    items:
- *     $ref:'#/definitions/UserSchema'
- *  UserListResponse:
- *   properties:
- *    message:
- *     type:string
- *     example:Success
- *    status:
- *     type:integer
- *     example:200
- *    data:
- *     $ref:'#/definitions/Users'
- *  UserByIdGetResponse:
- *   properties:
- *    message:
- *     type: string
- *     example: Success
- *    status:
- *     type: integer
- *     example: 200
- *    data:
- *     $ref:'#/definitions/User'
- */
 
+
+router.get('/', authMiddleware(USER, 'read'), validationHandler(validation.get), UserController.get);
+router.get('/users', authMiddleware(USER, 'read'), validationHandler(validation.get), UserController.getAll);
+router.post('/', authMiddleware(USER, 'read'), validationHandler(validation.create), UserController.create);
+router.post('/login', validationHandler(validation.create), UserController.login);
+router.put('/:id', authMiddleware(HEAD_TRAINER, 'write'), validationHandler(validation.update), UserController.update);
+router.delete('/:id', authMiddleware(USER, 'read'), validationHandler(validation.delete), UserController.delete);
+router.post('/createToken', UserController.createToken);
+export default router;
+
+// get user as per token
 /**
  * @swagger
  * /user:
  *  get:
  *   security:
- *    -APIKeyHeader:[]
+ *    - bearerAuth: []
  *   tags:
- *    -User
- *   description: Return all the users
- *   produces;
- *    -application/json
+ *    - User
+ *   description: Returns the users based on token
  *   responses:
- *    200:
- *     description: Array of user
- *     schema:
- *      $ref: '#/definitions/UserListResponse'
+ *     200:
+ *      description: Array of user
+ *      content:
+ *        application/json:
+ *         schema:
+ *           properties:
+ *            _id:
+ *              type: string
+ *            originalId:
+ *              type: string
+ *            name:
+ *              type: string
+ *            email:
+ *              type: string
+ *            role:
+ *              type: string
+ *            createdAt:
+ *              type: string
+ *            deletedAt:
+ *              type: string
  */
-router.get('/', authMiddleware(USER, 'read'), validationHandler(validation.get), UserController.get);
 
-router.get('/all', authMiddleware(USER, 'read'), validationHandler(validation.get), UserController.getAll);
- 
+// Get all User
 /**
  * @swagger
- * /user
- *  post:
- *    security:
- *      -APIKeyHeader:[]
- *    tags:
- *      - User
- *    description: Returns all the user
- *      parameters:
- *        -name: id
- *        in:body
- *        type:string
- *      description: Delete details of given user id
- *        required:true
- *      schema:
- *        type: object
- *      properties:
- *        name:
- *          type:string
- *          example: "John"
- *        email:
- *          type:string
- *          example: "john@gmail.com"
- *        password:
- *          type: string
- *          example: "Test@1 
- *      
- *    produces:
- *      - application/json
- *      responses:
- *        200:
- *          description: Array of audience builder
- *          schema:
- *            $ref:'#/definitions/UserByIdGetResponse'                
+ * /user/users:
+ *  get:
+ *   security:
+ *    - bearerAuth: []
+ *   tags:
+ *    - User
+ *   description: Returns all the users
+ *   responses:
+ *     200:
+ *      description: Array of user
+ *      content:
+ *        application/json:
+ *         schema:
+ *           properties:
+ *            _id:
+ *              type: string
+ *            originalId:
+ *              type: string
+ *            name:
+ *              type: string
+ *            email:
+ *              type: string
+ *            role:
+ *              type: string
+ *            createdAt:
+ *              type: string
+ *            deletedAt:
+ *              type: string
  */
 
-router.post('/', authMiddleware(USER, 'read'), validationHandler(validation.create), UserController.create);
-router.post('/login', validationHandler(validation.create), UserController.login);
 
-router.put('/:id', authMiddleware(HEAD_TRAINER, 'write'), validationHandler(validation.update), UserController.update);
+// create Token
+// post swagger 
+/**
+ * @swagger
+ * /user/login:
+ *   post:
+ *     description: Login
+ *     tags: [User]
+ *     requestBody:
+ *        description: Enter Email and Password
+ *        required: true
+ *        content:
+ *           application/json:
+ *            schema:
+ *             type: object
+ *             required:
+ *              -email
+ *              -password
+ *             properties:
+ *               email:
+ *                type: string
+ *                example: 'john@successive.tech'
+ *               password:
+ *                type: string
+ *                example: 'john@123'
+ *     responses:
+ *         201:
+ *           description: Login Successful
+ */
 
+/**
+ * @swagger
+ * /user/createToken:
+ *   post:
+ *     description: create token
+ *     tags: [User]
+ *     requestBody:
+ *        description: Enter ID and Email
+ *        required: true
+ *        content:
+ *           application/json:
+ *            schema:
+ *             type: object
+ *             required:
+ *              -Id
+ *              -Email
+ *             properties:
+ *               Id:
+ *                type: string
+ *                example: _id:"614b21527b24882e7a49cf0a"
+ *               email:
+ *                type: string
+ *                example: "milinda@successive.tech"
+ *     responses:
+ *         200:
+ *           description: Token created
+ */
+
+
+// post swagger 
 /**
  * @swagger
  * /user:
- *    delete:
- *      security:
- *        - APIKeyHeader:[]
- *       tags:
- *          - User
- *        description: Delete user by id
- *        parameters:
- *          - name:id
- *            in: path
- *            types: string
- *            description: Delete details of given user id
- *            required: true
- *        produces:
- *          - application/json
- *        responses:
- *          200:
- *            description: User delete
+ *   post:
+ *     description: Create New User
+ *     tags: [User]
+ *     requestBody:
+ *        description: Enter name,email,password,role to create new user
+ *        required: true
+ *        content:
+ *           application/json:
  *            schema:
- *              $ref: '#/definitions/UserByIdGetResponse'
+ *             type: object
+ *             required:
+ *              -email
+ *              -password
+ *              -role
+ *              -name
+ *             properties:
+ *               name:
+ *                type: string
+ *                example: 'John Milton'
+ *               role:
+ *                type: string
+ *                example: 'trainee'
+ *               email:
+ *                type: string
+ *                example: 'john@successive.tech'
+ *               password:
+ *                type: string
+ *                example: 'john@123'
+ *     responses:
+ *         200:
+ *           description: Created new user successfully
  */
 
-router.delete('/:id', authMiddleware(USER, 'read'), validationHandler(validation.delete), UserController.delete);
-router.post('/createToken', UserController.createToken);
-export default router;
+// Update swagger
+/**
+ * @swagger
+ * /user/:id:
+ *   put:
+ *     description: Update existing User
+ *     tags: [User]
+ *     consumes:
+ *         - application/json
+ *     produces:
+ *         - application/json
+ *     parameters:
+ *         - in: path
+ *           name: id
+ *           schema:
+ *            type: string
+ *           required: true
+ *           description: originalId of the user
+ *           example: 1234frg43455
+ *     requestBody:
+ *        description: Enter name,email,password,role to update user
+ *        required: true
+ *        content:
+ *           application/json:
+ *            schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                type: string
+ *                example: 'John hardy'
+ *               role:
+ *                type: string
+ *                example: 'trainee'
+ *               email:
+ *                type: string
+ *                example: 'hardy@successive.tech'
+ *               password:
+ *                type: string
+ *                example: 'hardy@123'
+ *     responses:
+ *         200:
+ *           description: User updated successfully
+ */
+
+
+// delete swagger - 
+/**
+ * @swagger
+ * /user/:id:
+ *   delete:
+ *     description: Delete User
+ *     tags: [User]
+ *     parameters:
+ *         - in: path
+ *           name: id
+ *           schema:
+ *            type: string
+ *           required: true
+ *           description: id of the user
+ *           example: 1234frg43455
+ *     responses:
+ *         200:
+ *           description: user deleted successfully
+ */
 

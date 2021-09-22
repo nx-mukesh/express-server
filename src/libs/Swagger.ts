@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import  swaggerJSDoc = require('swagger-jsdoc');
+import * as swaggerJSDoc from 'swagger-jsdoc';
 import * as swaggerUI from 'swagger-ui-express';
 
 export interface ISwaggerDefinition {
@@ -20,12 +20,14 @@ export default class Swagger {
 		router.route('/').get((req, res) => {
 			const options = {
 				// path to the API docs
-				apis: ['dist/src/**/*.js'],
+				apis: ['dist/**/*.js'],
 				swaggerDefinition,
 			};
 			// initialize swagger-jsdoc
 			const swaggerSpec = swaggerJSDoc(options);
+			console.log("swaggerSpec==>",swaggerSpec)
 			res.send(swaggerSpec);
+			
 		});
 		return router;
 	}
