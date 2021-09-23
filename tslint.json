@@ -6,7 +6,7 @@
   "rules": {
     "class-name": true,
     "comment-format": [true, "check-space"],
-    "indent": [true, "spaces", 2],
+    "indent": [false, "spaces", 2],
     "one-line": [true, "check-open-brace", "check-whitespace"],
     "no-var-keyword": true,
     "quotemark": [true, "single", "avoid-escape"],

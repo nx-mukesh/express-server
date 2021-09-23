@@ -43,7 +43,7 @@ class UserController {
 	 */
 	public async getAll(req: Request, res: Response, next: NextFunction) {
 		try {
-      const {skip, limit, search} = req.query;
+			const { skip, limit, search } = req.query;
 			const token = req.header('Authorization');
 			if (!token) {
 				return next({ err: 'Unauthorized', message: 'Token not found', status: 403 });
@@ -51,7 +51,7 @@ class UserController {
 			const { secret } = config;
 			const user = await jwt.verify(token, secret);
 			console.log('In userController-- user', user);
-			const userData = await userRepository.findData({ deletedAt: undefined, skip, limit, search});
+			const userData = await userRepository.findData({ deletedAt: undefined, skip, limit, search });
 			return res.status(200).send({
 				message: 'user data fetched successfully',
 				data: userData,
@@ -156,11 +156,11 @@ class UserController {
 	 */
 	public async createToken(req: Request, res: Response, next: NextFunction) {
 		try {
-			// const { id, email } = req.body;
-			const token = await jwt.sign(req.body, config.secret, { expiresIn: '15m' });
+			const { id, email } = req.body;
+			const token = await jwt.sign({id, email}, config.secret, { expiresIn: '15m' });
 			return res.status(200).send({
 				message: 'token successfully created',
-				data: { token },
+				data: token,
 				status: 200,
 			});
 		} catch (error) {
@@ -177,15 +177,15 @@ class UserController {
 	public async login(req: Request, res: Response, next: NextFunction) {
 		try {
 			const { email, password } = req.body;
-			const user = await userRepository.findOneData({ deletedAt: null, email: email });
+			const user = await userRepository.findOneData({ deletedAt: undefined, email: email });
 			if (!user) {
 				return next({ status: 404, error: 'bad request', message: 'User Not found' });
 			}
-			const validPassword = bcrypt.compareSync(password, user.password);  
+			const validPassword = bcrypt.compareSync(password, user.password);
 			if (!validPassword) {
 				return next({ success: false, message: 'Password not matched' });
 			}
-      const userCredentials = {email, password}
+			const userCredentials = { email, password };
 			const token = await jwt.sign(userCredentials, config.secret, { expiresIn: '15m' });
 			return res.status(200).send({ success: true, message: 'login success', token: token });
 		} catch (error) {

@@ -1,9 +1,5 @@
 // import * as mongoose from 'mongoose';
-import { Query, EnforceDocument, Document, Model, Types, UpdateWriteOpResult } from 'mongoose';
-import { BCRYPT_SALT_ROUNDS } from '../../libs/constants';
-import * as bcrypt from 'bcrypt';
-import { idText } from 'typescript';
-// import { isNull } from 'util';
+import { Query, EnforceDocument, Document, Model, Types } from 'mongoose';
 
 export default class VersionableRepository<I extends Document, M extends Model<I>> {
 	private model: M;
@@ -45,7 +41,7 @@ export default class VersionableRepository<I extends Document, M extends Model<I
 			],
 		};
 		console.log('finalQuery:versionRepo', finalQuery);
-		return this.model.find(finalQuery, projection, { skip: +(skip), limit: +(limit) }).sort(`-${sortBy}`);
+		return this.model.find(finalQuery, projection, { skip: +skip, limit: +limit }).sort(`-${sortBy}`);
 	}
 
 	/**
