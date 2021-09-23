@@ -19,8 +19,3 @@ export const permissions: any = {
     delete: [HEAD_TRAINER],
   },
 };
-
-
-
-
-
