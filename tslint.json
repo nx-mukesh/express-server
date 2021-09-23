@@ -6,7 +6,7 @@
   "rules": {
     "class-name": true,
     "comment-format": [true, "check-space"],
-    "indent": [false, "spaces", 2],
+    "indent": [true, "spaces", 2],
     "one-line": [true, "check-open-brace", "check-whitespace"],
     "no-var-keyword": true,
     "quotemark": [true, "single", "avoid-escape"],
@@ -42,7 +42,7 @@
     "no-internal-module": true,
     "no-trailing-whitespace": true,
     "no-null-keyword": true,
-    "no-var-required":false,
+    "no-var-required": false,
     "prefer-const": true,
     "jsdoc-format": true,
     "no-console": [false]
