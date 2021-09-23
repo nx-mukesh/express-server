@@ -156,11 +156,11 @@ class UserController {
 	 */
 	public async createToken(req: Request, res: Response, next: NextFunction) {
 		try {
-			const { id, email } = req.body;
-			const token = await jwt.sign({id, email}, config.secret, { expiresIn: '15m' });
+			// const { id, email } = req.body;
+			const token = await jwt.sign(req.body, config.secret, { expiresIn: '15m' });
 			return res.status(200).send({
 				message: 'token successfully created',
-				data: token,
+				data: {token},
 				status: 200,
 			});
 		} catch (error) {
@@ -187,7 +187,7 @@ class UserController {
 			}
 			const userCredentials = { email, password };
 			const token = await jwt.sign(userCredentials, config.secret, { expiresIn: '15m' });
-			return res.status(200).send({ success: true, message: 'login success', token: token });
+			return res.status(200).send({ success: true, message: 'Login success', data: {token} });
 		} catch (error) {
 			return res.status(400).send({ error: error, message: 'user id or password is invalid' });
 		}
