@@ -2,17 +2,17 @@ import { Router } from 'express';
 import TraineeController from './Controller';
 import validationHandler from '../../libs/validationHandler';
 import authMiddleware from '../../libs/routes/authMiddleWare';
-import { TRAINEES} from '../../libs/constants';
+import { TRAINEES } from '../../libs/constants';
 import validation from './validation';
 
 const router = Router();
 
 router
-	.get('/', authMiddleware(TRAINEES, 'read'), validationHandler(validation.get), TraineeController.get)
-	.post('/', authMiddleware(TRAINEES, 'write'), validationHandler(validation.create), TraineeController.create)
-	.put('/:id', authMiddleware(TRAINEES, 'write'), validationHandler(validation.update), TraineeController.update)
-	.delete('/:id', authMiddleware(TRAINEES, 'delete'), validationHandler(validation.delete), TraineeController.delete)
-	.get('/allTrainees', authMiddleware(TRAINEES, 'read'), validationHandler(validation.get), TraineeController.getAll);
+  .get('/', authMiddleware(TRAINEES, 'read'), validationHandler(validation.get), TraineeController.get)
+  .post('/', authMiddleware(TRAINEES, 'write'), validationHandler(validation.create), TraineeController.create)
+  .put('/:id', authMiddleware(TRAINEES, 'write'), validationHandler(validation.update), TraineeController.update)
+  .delete('/:id', authMiddleware(TRAINEES, 'delete'), validationHandler(validation.delete), TraineeController.delete)
+  .get('/allTrainees', authMiddleware(TRAINEES, 'read'), validationHandler(validation.get), TraineeController.getAll);
 
 export default router;
 
@@ -83,7 +83,7 @@ export default router;
  *              type: string
  */
 
-// post swagger 
+// post swagger
 /**
  * @swagger
  * /trainee/login:
@@ -112,7 +112,7 @@ export default router;
  *           description: Login Successful
  */
 
-// post swagger 
+// post swagger
 /**
  * @swagger
  * /trainee:
@@ -193,8 +193,7 @@ export default router;
  *           description: trainee updated successfully
  */
 
-
-// delete swagger - 
+// delete swagger -
 /**
  * @swagger
  * /trainee/:id:

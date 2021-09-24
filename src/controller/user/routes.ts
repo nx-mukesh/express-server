@@ -82,9 +82,8 @@ export default router;
  *              type: string
  */
 
-
 // create Token
-// post swagger 
+// post swagger
 /**
  * @swagger
  * /user/login:
@@ -141,8 +140,7 @@ export default router;
  *           description: Token created
  */
 
-
-// post swagger 
+// post swagger
 /**
  * @swagger
  * /user:
@@ -223,8 +221,7 @@ export default router;
  *           description: User updated successfully
  */
 
-
-// delete swagger - 
+// delete swagger -
 /**
  * @swagger
  * /user/:id:
@@ -243,4 +240,3 @@ export default router;
  *         200:
  *           description: user deleted successfully
  */
-

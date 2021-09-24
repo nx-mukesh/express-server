@@ -28,7 +28,7 @@ class UserRepository extends VersionableRepository<IUserModel, Model<IUserModel>
   }
 
   public delete(data): UpdateQuery<IUserModel> {
-    return super.softDelete({ originalId: data.originalId, deletedAt: undefined },{deletedAt:Date.now()});
+    return super.softDelete({ originalId: data.originalId, deletedAt: undefined }, { deletedAt: Date.now() });
   }
 
   public async update(data: any): Promise<IUserModel> {

@@ -1,9 +1,9 @@
 import { Router } from 'express';
 import { traineeRouter, userRouter } from './controller';
 
-export const router:Router = Router();
+export const router: Router = Router();
 /**
- * 
+ *
  * @swagger
  * securityDefinitions:
  *   APIKeyHeader:
