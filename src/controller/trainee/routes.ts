@@ -7,36 +7,10 @@ import validation from './validation';
 
 const router = Router();
 
-router
-  .get(
-    '/',
-    authMiddleware(TRAINEES, 'read'),
-    validationHandler(validation.get),
-    traineeController.get
-  )
-  .post(
-    '/',
-    authMiddleware(TRAINEES, 'write'),
-    validationHandler(validation.create),
-    traineeController.create
-  )
-  .put(
-    '/:id',
-    authMiddleware(TRAINEES, 'write'),
-    validationHandler(validation.update),
-    traineeController.delete
-  )
-  .delete(
-    '/:id',
-    authMiddleware(TRAINEES, 'delete'),
-    validationHandler(validation.delete),
-    traineeController.delete
-  )
-  .get(
-    '/getAll',
-    authMiddleware(TRAINEES, 'read'),
-    validationHandler(validation.get),
-    traineeController.getAll
-  )
+router.get('/', authMiddleware(TRAINEES, 'read'), validationHandler(validation.get), traineeController.get);
+router.post('/', authMiddleware(TRAINEES, 'write'), validationHandler(validation.create), traineeController.create);
+router.put('/:id', authMiddleware(TRAINEES, 'write'), validationHandler(validation.update), traineeController.delete);
+router.delete('/:id', authMiddleware(TRAINEES, 'delete'), validationHandler(validation.delete), traineeController.delete);
+router.get('/getAll', authMiddleware(TRAINEES, 'read'), validationHandler(validation.get), traineeController.getAll);
 
 export default router;

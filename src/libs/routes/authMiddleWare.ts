@@ -18,7 +18,7 @@ const authMiddleware = (module, permissionType) => async (req, res, next) => {
     next({
       err: 'Unauthorized',
       message: 'User not Authorized to access..!!',
-      status: 403,
+      status: 401,
     });
   }
 
@@ -36,7 +36,7 @@ const authMiddleware = (module, permissionType) => async (req, res, next) => {
     next({
       err: 'Unauthorized',
       message: 'User not Authorized to access!!',
-      status: 403,
+      status: 401,
     });
   }
 
