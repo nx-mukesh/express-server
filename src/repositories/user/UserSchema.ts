@@ -15,6 +15,3 @@ export default class UserSchema extends VersionableSchema {
   }
 }
 
-// export default new userSchema({
-//   collection: 'user',
-// });

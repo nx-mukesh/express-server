@@ -25,19 +25,17 @@ export default class Swagger {
 			};
 			// initialize swagger-jsdoc
 			const swaggerSpec = swaggerJSDoc(options);
-			console.log("swaggerSpec==>",swaggerSpec)
+			// console.log("swaggerSpec==>",swaggerSpec)
 			res.send(swaggerSpec);
-			
 		});
 		return router;
 	}
-  /**
-   * @description Swagger
-   * @param swaggerUrl 
-   * @returns 
-   */
+	/**
+	 * @description Swagger
+	 * @param swaggerUrl
+	 * @returns
+	 */
 	public getUI(swaggerUrl: string) {
-		
 		const options = {
 			swaggerUrl: `${swaggerUrl}.json`,
 		};

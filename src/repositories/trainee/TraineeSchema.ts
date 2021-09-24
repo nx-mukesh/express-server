@@ -1,6 +1,7 @@
-import * as mongoose from 'mongoose';
 
-class TraineeSchema extends mongoose.Schema {
+import VersionableSchema from '../versionable/VersionableSchema';
+
+class TraineeSchema extends VersionableSchema {
   constructor(collections: any) {
     const baseSchema = {
       _id: { type: String },

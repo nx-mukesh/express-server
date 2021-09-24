@@ -45,9 +45,11 @@ class UserController {
 		try {
 			const { skip, limit, search } = req.query;
 			const userData = await userRepository.findData({ deletedAt: undefined, skip, limit, search });
+			const documents = await userRepository.count()
 			return res.status(200).send({
 				status: 200,
 				message: 'users data fetched successfully',
+				userCount: documents,
 				users: userData,
 			});
 		} catch (error) {
@@ -125,6 +127,7 @@ class UserController {
 			return res.status(200).send({
 				status: 200,
 				message: 'user deleted successfully',
+				result: userData
 			});
 		} catch (error) {
 			return res.status(500).send({ status: 500, error: 'server error', message: 'Something went Wrong' });

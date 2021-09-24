@@ -21,18 +21,26 @@ const configuration: IConfig = Object.freeze({
 			version,
 		},
 		servers: [{url: 'http://localhost:9000/api'}],
-		components:{
-			securitySchema:{
-				bearerAuth: {
-					type:"http",
-					schema:'bearer',
-					bearerFormat:"JWT",
-				}
-			}
+		securityDefinitions: {
+			JWT: {
+				type: 'apiKey',
+				description: 'JWT authorization of an API',
+				name: 'Authorization',
+				in: 'header',
+			},
 		},
-		security:[{
-			bearerAuth:[]
-		}],
+		// components:{
+		// 	securitySchema:{
+		// 		bearerAuth: {
+		// 			type:"http",
+		// 			schema:'bearer',
+		// 			bearerFormat:"JWT",
+		// 		}
+		// 	}
+		// },
+		// security:[{
+		// 	bearerAuth:[]
+		// }],
 	},
   swaggerUrl: SwaggerURL,
 });

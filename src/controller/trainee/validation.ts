@@ -7,11 +7,11 @@ export default Object.freeze({
 			string: true,
 			in: ['body'],
 		},
-		name: {
+		password: {
 			required: true,
 			regex: '',
 			in: ['body'],
-			errorMessage: 'Name is required',
+			errorMessage: 'Password is required',
 		},
 	},
 	delete: {
