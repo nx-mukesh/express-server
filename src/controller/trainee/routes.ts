@@ -53,7 +53,7 @@ export default router;
 // Get all trainee
 /**
  * @swagger
- * /trainee/users:
+ * /trainee/allTrainees:
  *  get:
  *   description: Returns all the users
  *   tags:

@@ -6,7 +6,12 @@ export const SwaggerURL = '/api-docs';
 
 export const SwaggerSetup = {
   description: 'API with Swagger',
+  in: 'Body',
+  name: 'Authorization',
+  serviceConfig: 'ServiceConfig',
   title: 'Training-API',
+  // type: 'apiKey',
+  // user: 'User',
 };
 
 const configuration: IConfig = Object.freeze({
@@ -15,7 +20,8 @@ const configuration: IConfig = Object.freeze({
   secret: process.env.TOKEN,
   mongoURL: process.env.MONGO_URL,
   swaggerDefinition: {
-    openapi: '3.0.0',
+    // openapi: '3.0.0',
+    basePath: '/api',
     info: {
       ...SwaggerSetup,
       version,
