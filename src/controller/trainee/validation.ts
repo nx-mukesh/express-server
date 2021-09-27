@@ -1,22 +1,17 @@
 export default Object.freeze({
   // POST  /api/trainee/create
   create: {
-    id: {
-      exists: true,
-      errorMessage: 'Id is required',
-      // required: true,
+    email: {
+      errorMessage: 'email is required',
+      required: true,
       string: true,
-      // in: ['body'],
-      // custom: (value) => {
-      //   console.log('Value', value);
-      //   throw { error: 'Error Occurred', message: 'Message' };
-      // },
+      in: ['body'],
     },
-    name: {
+    password: {
       required: true,
       regex: '',
       in: ['body'],
-      errorMessage: 'Name is required',
+      errorMessage: 'Password is required',
     },
   },
   delete: {
@@ -40,9 +35,10 @@ export default Object.freeze({
   },
   update: {
     id: {
-      // required: true,
+      required: true,
       string: true,
-      in: ['body'],
+      in: ['Params'],
+      errorMessage: 'Id required in Params',
     },
     dataToUpdate: {
       in: ['body'],

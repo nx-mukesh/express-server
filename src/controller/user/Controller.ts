@@ -18,18 +18,18 @@ class UserController {
     try {
       const token = req.header('Authorization');
       if (!token) {
-        return next({ err: 'Unauthorized', message: 'Token not found', status: 403 });
+        return next({ status: 403, error: 'Unauthorized', message: 'Token not found' });
       }
       const { secret } = config;
       const user = await jwt.verify(token, secret);
-      console.log('In userController-- user', user);
       const userData = await userRepository.findOneData({ _id: user._id });
       return res.status(200).send({
+        status: 200,
         message: 'user data fetched successfully',
-        data: userData,
+        user: userData,
       });
-    } catch (error) {
-      return res.status(500).send({ err: error, message: 'Something went wrong..!!' });
+    } catch (err) {
+      return res.status(500).send({ status: 500, error: err, message: 'Something went wrong..!!' });
     }
   }
 
@@ -44,20 +44,16 @@ class UserController {
   public async getAll(req: Request, res: Response, next: NextFunction) {
     try {
       const { skip, limit, search } = req.query;
-      const token = req.header('Authorization');
-      if (!token) {
-        return next({ err: 'Unauthorized', message: 'Token not found', status: 403 });
-      }
-      const { secret } = config;
-      const user = await jwt.verify(token, secret);
-      console.log('In userController-- user', user);
       const userData = await userRepository.findData({ deletedAt: undefined, skip, limit, search });
+      const documents = await userRepository.count();
       return res.status(200).send({
-        message: 'user data fetched successfully',
-        data: userData,
+        status: 200,
+        message: 'users data fetched successfully',
+        userCount: documents,
+        users: userData,
       });
-    } catch (error) {
-      return res.status(500).send({ err: error, message: 'Something went wrong..!!' });
+    } catch (err) {
+      return res.status(500).send({ status: 500, error: err, message: 'Something went wrong..!!' });
     }
   }
   /**
@@ -72,21 +68,19 @@ class UserController {
       const { email, password } = req.body;
       if (!email) {
         return next({
+          status: 400,
           err: 'Bad Request',
           message: 'email is required',
-          status: 400,
         });
       }
       if (!password) {
         return next({
+          status: 400,
           err: 'Bad Request',
           message: 'Password is required',
-          status: 400,
         });
       }
       const hashPassword = await bcrypt.hashSync(password, BCRYPT_SALT_ROUNDS);
-      console.log({ hashPassword });
-
       const newUser = {
         name: req.body.name,
         email: req.body.email,
@@ -95,9 +89,9 @@ class UserController {
       };
 
       const userData = await userRepository.create(newUser);
-      return res.status(200).send({ message: 'user registered successfully', users: userData });
+      return res.status(200).send({ status: 200, message: 'user registered successfully', users: userData });
     } catch (error) {
-      return res.status(500).send({ err: 'Server error', message: 'Internal server error' });
+      return res.status(500).send({ status: 500, error: 'Server error', message: 'Internal server error' });
     }
   }
 
@@ -111,16 +105,10 @@ class UserController {
   public async update(req: Request, res: Response, next: NextFunction) {
     try {
       const Id = req.params.id;
-      console.log('Id====>', Id);
-      const userData = await userRepository.findOneData({ _id: Id });
-      console.log('willUpdate', userData);
-      if (!userData) {
-        next({ err: 'User Not exist', status: 404 });
-      }
-      const updateUser = await userRepository.update(userData);
-      return res.status(200).send({ message: 'user updated successfully', UserData: updateUser });
+      const updateUser = await userRepository.update({ originalId: Id, ...req.body });
+      return res.status(200).send({ status: 200, message: 'user updated successfully', UserData: updateUser });
     } catch (error) {
-      return res.status(500).send({ err: 'Server Error', message: 'Something went wrong' });
+      return res.status(500).send({ status: 500, error: 'Server Error', message: 'Something went wrong' });
     }
   }
 
@@ -135,15 +123,14 @@ class UserController {
     try {
       const Id = req.params.id;
       const findUser = await userRepository.findOneData({ _id: Id });
-      console.log('findFor delete in User controller', { findUser });
       const userData = await userRepository.delete(findUser);
-      console.log('deleteData in User controller', { userData });
       return res.status(200).send({
+        status: 200,
         message: 'user deleted successfully',
-        deleted_User: userData,
+        result: userData,
       });
     } catch (error) {
-      return res.status(500).send({ err: 'server error', message: 'Something went Wrong' });
+      return res.status(500).send({ status: 500, error: 'server error', message: 'Something went Wrong' });
     }
   }
 
@@ -164,7 +151,7 @@ class UserController {
         status: 200,
       });
     } catch (error) {
-      return res.status(500).send({ err: 'Server Error', message: 'Something went wrong' });
+      return res.status(500).send({ status: 500, error: 'Server Error', message: 'Something went wrong' });
     }
   }
   /**
@@ -183,13 +170,14 @@ class UserController {
       }
       const validPassword = bcrypt.compareSync(password, user.password);
       if (!validPassword) {
-        return next({ success: false, message: 'Password not matched' });
+        return next({ status: 404, message: 'Password does not matched' });
       }
-      const userCredentials = { email, password };
+      const _id = user._id;
+      const userCredentials = { email, password, _id };
       const token = await jwt.sign(userCredentials, config.secret, { expiresIn: '15m' });
-      return res.status(200).send({ success: true, message: 'Login success', data: { token } });
-    } catch (error) {
-      return res.status(400).send({ error: error, message: 'user id or password is invalid' });
+      return res.status(200).send({ status: 200, message: 'Login Successful', data: { token } });
+    } catch (err) {
+      return res.status(400).send({ status: 400, error: err, message: 'User Id or Password is Invalid' });
     }
   }
 }

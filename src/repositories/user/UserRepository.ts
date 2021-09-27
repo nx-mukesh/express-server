@@ -7,18 +7,15 @@ class UserRepository extends VersionableRepository<IUserModel, Model<IUserModel>
   constructor() {
     super(userModel);
   }
-  // static generate mongodb ObjectId
   public static generateObjectId() {
     return String(new Types.ObjectId());
   }
 
   public findOneData(query): Query<IUserModel, IUserModel> {
-    console.log('In user repo-findOne Query', { query });
     return super.findOne(query);
   }
 
   public findData(query, projection?: any, option?: any): Query<IUserModel[], IUserModel> {
-    console.log('In user repo-find Query', { query });
     return super.find(query, projection, option);
   }
 
@@ -31,11 +28,10 @@ class UserRepository extends VersionableRepository<IUserModel, Model<IUserModel>
   }
 
   public delete(data): UpdateQuery<IUserModel> {
-    return super.softDelete({ originalId: data.originalId, deletedAt: undefined }, data.originalId);
+    return super.softDelete({ originalId: data.originalId, deletedAt: undefined }, { deletedAt: Date.now() });
   }
 
   public async update(data: any): Promise<IUserModel> {
-    console.log('UserRepository:: Update - data', data);
     return super.update(data);
   }
 }

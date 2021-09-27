@@ -1,5 +1,5 @@
 // import * as mongoose from 'mongoose';
-import { Query, EnforceDocument, Document, Model, Types } from 'mongoose';
+import { Query, EnforceDocument, Document, Model, Types, UpdateWriteOpResult } from 'mongoose';
 
 export default class VersionableRepository<I extends Document, M extends Model<I>> {
   private model: M;
@@ -19,7 +19,6 @@ export default class VersionableRepository<I extends Document, M extends Model<I
    * @returns one Document
    */
   protected findOne(query: any): Query<EnforceDocument<I, {}>, EnforceDocument<I, {}>, {}, I> {
-    console.log('Query for findOne in versionable::', query);
     const finalQuery = { deletedAt: undefined, ...query };
     return this.model.findOne(finalQuery).lean();
   }
@@ -40,7 +39,6 @@ export default class VersionableRepository<I extends Document, M extends Model<I
         { email: { $regex: new RegExp(search), $options: 'i' } },
       ],
     };
-    console.log('finalQuery:versionRepo', finalQuery);
     return this.model.find(finalQuery, projection, { skip: +skip, limit: +limit }).sort(`-${sortBy}`);
   }
 
@@ -58,15 +56,12 @@ export default class VersionableRepository<I extends Document, M extends Model<I
    * @param data
    */
   protected create(data: any): Promise<I> {
-    console.log('versionableRepository :: create data', data);
     const id = VersionableRepository.generateObjectId();
-    console.log({ id });
     const model = new this.model({
       _id: id,
       originalId: id,
       ...data,
     });
-    console.log({ data });
     console.log({ model });
     return model.save();
   }
@@ -78,18 +73,13 @@ export default class VersionableRepository<I extends Document, M extends Model<I
    * @returns deleted date
    */
   protected softDelete(filter, data): Query<any, EnforceDocument<I, {}>> {
-    console.log('softDelete', filter);
-    console.log('softDelete', data);
     return this.model.updateOne(filter, data);
   }
-
   /**
    * @description Update previous data
    */
   protected async update(data: any): Promise<I> {
-    console.log('UserRepository:: Update - data', data);
     const previousRecord = await this.findOne({ originalId: data.originalId });
-    console.log('previous record', JSON.stringify(previousRecord, undefined, 2));
     if (previousRecord) {
       await this.softDelete({ originalId: data.originalId, deleteAt: undefined }, { deletedAt: Date.now() });
     } else {

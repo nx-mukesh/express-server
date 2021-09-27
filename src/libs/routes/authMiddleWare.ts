@@ -16,7 +16,7 @@ const authMiddleware = (module, permissionType) => async (req, res, next) => {
     user = jwt.verify(token, secret);
   } catch (err) {
     next({
-      err: 'Unauthorized',
+      err: 'Unauthorized (token issue)',
       message: 'User not Authorized to access..!!',
       status: 401,
     });
@@ -24,14 +24,12 @@ const authMiddleware = (module, permissionType) => async (req, res, next) => {
 
   if (!user) {
     next({
-      error: 'unauthorized',
+      error: 'unauthorized (token issue 2)',
       message: 'permission denied!!',
       status: 403,
     });
   }
-  console.log('Logged user IN AuthMiddle', user._id);
   const userData = await userRepository.findOneData({ _id: user._id });
-  console.log('inAuthMiddle', { userData });
   if (!userData) {
     next({
       err: 'Unauthorized',
@@ -48,7 +46,6 @@ const authMiddleware = (module, permissionType) => async (req, res, next) => {
     });
   }
   req.user = user;
-  // console.log("user in Auth", user)
   next();
 };
 export default authMiddleware;

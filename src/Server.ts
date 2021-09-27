@@ -4,6 +4,7 @@ import * as morgan from 'morgan';
 import Database from './libs/Database';
 import { notFoundRoute, errorHandler } from './libs/routes';
 import router from './router';
+import Swagger from './libs/Swagger';
 
 export default class Server {
   private app: express.Express;
@@ -47,6 +48,7 @@ export default class Server {
    */
   bootstrap() {
     this.initBodyParser();
+    this.initSwagger();
     this.setupRoute();
 
     return this.app;
@@ -57,13 +59,31 @@ export default class Server {
     try {
       await Database.open(mongoURL);
       this.app.listen(port, () => {
-        console.log(
-          `|| Server is running at PORT '${port}' in '${env}' mode ||`
-        );
+        console.log(`|| Server is running at PORT '${port}' in '${env}' mode ||`);
       });
     } catch (err) {
       console.log('Database connection error', err);
     }
     return this;
+  }
+
+  /**
+   * @description : Init Swagger
+   */
+  private initSwagger() {
+    const { swaggerDefinition, swaggerUrl } = this.config;
+    const swaggerSetup = new Swagger();
+
+    // JSON route
+    this.app.use(
+      `${swaggerUrl}.json`,
+      swaggerSetup.getRouter({
+        swaggerDefinition,
+      })
+    );
+
+    // UI route
+    const { serve, setup } = swaggerSetup.getUI(swaggerUrl);
+    this.app.use(swaggerUrl, serve, setup);
   }
 }

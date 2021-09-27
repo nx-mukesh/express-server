@@ -4,20 +4,16 @@ import { traineeModel } from './TraineeModel';
 import ITraineeModel from './ITraineeModel';
 import VersionableRepository from '../versionable/VersionableRepository';
 
-export default class TraineeRepository extends VersionableRepository<
-  ITraineeModel,
-  Model<ITraineeModel>
-> {
+class TraineeRepository extends VersionableRepository<ITraineeModel, Model<ITraineeModel>> {
   constructor() {
     super(traineeModel);
   }
-  // static generate mongodb ObjectId
   public static generateObjectId() {
     return String(new Types.ObjectId());
   }
 
   public findOneData(query): Query<ITraineeModel, ITraineeModel> {
-    return super.findOne(query).lean();
+    return super.findOne(query);
   }
 
   public findData(query, projection?: any, option?: any): Query<ITraineeModel[], ITraineeModel> {
@@ -33,11 +29,11 @@ export default class TraineeRepository extends VersionableRepository<
   }
 
   public delete(data): UpdateQuery<ITraineeModel> {
-    return super.softDelete({ originalId: data.originalId, deleteAt: undefined }, data.originalId);
+    return super.softDelete({ originalId: data.originalId, deletedAt: undefined }, { deletedAt: Date.now() });
   }
 
   public async update(data: any): Promise<ITraineeModel> {
-    console.log('UserRepository:: Update - data', data);
     return super.update(data);
   }
 }
+export default TraineeRepository;

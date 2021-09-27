@@ -3,6 +3,7 @@
 const { checkSchema, validationResult } = require('express-validator/check');
 
 const validationHandler = (validator) => {
+  // console.log("InValidationHandler")
   return [
     checkSchema(validator),
     (req, res, next) => {
