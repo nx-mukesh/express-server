@@ -7,17 +7,7 @@ import validation from './validation';
 
 const router = Router();
 
-router
-  .get('/', authMiddleware(TRAINEES, 'read'), validationHandler(validation.get), TraineeController.get)
-  .post('/', authMiddleware(TRAINEES, 'write'), validationHandler(validation.create), TraineeController.create)
-  .put('/:id', authMiddleware(TRAINEES, 'write'), validationHandler(validation.update), TraineeController.update)
-  .delete('/:id', authMiddleware(TRAINEES, 'delete'), validationHandler(validation.delete), TraineeController.delete)
-  .get('/allTrainees', authMiddleware(TRAINEES, 'read'), validationHandler(validation.get), TraineeController.getAll);
-
-export default router;
-
 // get trainee as per token
-
 /**
  * @swagger
  * /trainee:
@@ -49,69 +39,9 @@ export default router;
  *            deletedAt:
  *              type: string
  */
+router.get('/', authMiddleware(TRAINEES, 'read'), validationHandler(validation.get), TraineeController.get);
 
-// Get all trainee
-/**
- * @swagger
- * /trainee/allTrainees:
- *  get:
- *   description: Returns all the users
- *   tags:
- *    - [Trainee]
- *   security:
- *    - bearerAuth: []
- *   responses:
- *     200:
- *      description: Array of trainee
- *      content:
- *        application/json:
- *         schema:
- *           properties:
- *            _id:
- *              type: string
- *            originalId:
- *              type: string
- *            name:
- *              type: string
- *            email:
- *              type: string
- *            role:
- *              type: string
- *            createdAt:
- *              type: string
- *            deletedAt:
- *              type: string
- */
-
-// post swagger
-/**
- * @swagger
- * /trainee/login:
- *   post:
- *     description: Login
- *     tags: [Trainee]
- *     requestBody:
- *        description: Enter Email and Password
- *        required: true
- *        content:
- *           application/json:
- *            schema:
- *             type: object
- *             required:
- *              -email
- *              -password
- *             properties:
- *               email:
- *                type: string
- *                example: 'john@successive.tech'
- *               password:
- *                type: string
- *                example: 'john@123'
- *     responses:
- *         201:
- *           description: Login Successful
- */
-
+//Create New Trainee
 // post swagger
 /**
  * @swagger
@@ -148,7 +78,9 @@ export default router;
  *         200:
  *           description: Created new trainee successfully
  */
+router.post('/', authMiddleware(TRAINEES, 'write'), validationHandler(validation.create), TraineeController.create);
 
+// update existing Trainee
 // Update Trainee
 /**
  * @swagger
@@ -192,8 +124,9 @@ export default router;
  *         200:
  *           description: trainee updated successfully
  */
+router.put('/:id', authMiddleware(TRAINEES, 'write'), validationHandler(validation.update), TraineeController.update);
 
-// delete swagger -
+//Delete trainee 
 /**
  * @swagger
  * /trainee/:id:
@@ -212,3 +145,52 @@ export default router;
  *         200:
  *           description: trainee deleted successfully
  */
+ router.delete(
+  '/:id',
+  authMiddleware(TRAINEES, 'delete'),
+  validationHandler(validation.delete),
+  TraineeController.delete
+);
+
+
+// Get all trainee
+/**
+ * @swagger
+ * /trainee/allTrainees:
+ *  get:
+ *   description: Returns all the users
+ *   tags:
+ *    - [Trainee]
+ *   security:
+ *    - bearerAuth: []
+ *   responses:
+ *     200:
+ *      description: Array of trainee
+ *      content:
+ *        application/json:
+ *         schema:
+ *           properties:
+ *            _id:
+ *              type: string
+ *            originalId:
+ *              type: string
+ *            name:
+ *              type: string
+ *            email:
+ *              type: string
+ *            role:
+ *              type: string
+ *            createdAt:
+ *              type: string
+ *            deletedAt:
+ *              type: string
+ */
+ router.get(
+  '/allTrainees',
+  authMiddleware(TRAINEES, 'read'),
+  validationHandler(validation.get),
+  TraineeController.getAll
+);
+
+
+export default router;
