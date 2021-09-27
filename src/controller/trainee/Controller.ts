@@ -81,7 +81,7 @@ class TraineeController {
         });
       }
       const hashPassword = await bcrypt.hashSync(password, BCRYPT_SALT_ROUNDS);
-      console.log(email, hashPassword);
+      // console.log(email, hashPassword);
       const newTrainee = {
         name: req.body.name,
         email: req.body.email,
