@@ -62,7 +62,6 @@ export default class VersionableRepository<I extends Document, M extends Model<I
       originalId: id,
       ...data,
     });
-    console.log({ model });
     return model.save();
   }
 
