@@ -19,6 +19,7 @@ class FeedbackRepository extends VersionableRepository<IFeedbackModel, Model<IFe
   }
 
   public findData(query, projection?: any, option?: any): Query<IFeedbackModel[], IFeedbackModel> {
+    console.log("want to find", query)
     return super.find(query, projection, option);
   }
 
@@ -27,6 +28,7 @@ class FeedbackRepository extends VersionableRepository<IFeedbackModel, Model<IFe
   }
 
   public async create(data: any): Promise<IFeedbackModel> {
+    console.log("feedBack repo", data)
     return super.create(data);
   }
 

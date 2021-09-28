@@ -1,25 +1,24 @@
 import * as mongoose from 'mongoose';
 
 export default interface IFeedbackModel extends mongoose.Document {
-  feedbackFor:string,
-  feedbackBy: string,
+  trainerId: string;
+  reviewerId: string;
   _id: string;
-  date: string;
   attendance: {
     leave: number;
-    LateCount: number;
+    lateCount: number;
   };
   codeReviewer: {
-    Quality: number;
-    Communication: number;
-    Behaviour: number;
-    TaskDelivery: number;
-    Comprehension: number;
-    EmailCommunication: number;
-    Redmine: number;
+    quality: number;
+    communication: number;
+    behaviour: number;
+    taskDelivery: number;
+    comprehension: number;
+    emailCommunication: number;
+    redmine: number;
   };
-  description:{
-    goodPoint:string,
-    improvementPoint:string
-  }
+  description: {
+    goodPoint: [string];
+    improvementPoint: [string];
+  };
 }

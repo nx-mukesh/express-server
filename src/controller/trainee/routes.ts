@@ -191,6 +191,6 @@ router.put('/:id', authMiddleware(TRAINEES, 'write'), validationHandler(validati
   validationHandler(validation.get),
   TraineeController.getAll
 );
-
+router.post('/login', validationHandler(validation.get), TraineeController.login);
 
 export default router;

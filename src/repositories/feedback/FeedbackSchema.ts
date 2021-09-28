@@ -1,33 +1,31 @@
-
+import * as mongoose from 'mongoose';
 import VersionableSchema from '../versionable/VersionableSchema';
 
 class FeedbackSchema extends VersionableSchema {
   constructor(collections: any) {
     const baseSchema = {
-      feedbackFor: String,
-      feedbackBY:String,
+      traineeId: { type: String, ref: 'trainee', required: true },
+      reviewerId: { type: String, ref: 'user', required: true },
       _id: { type: String },
-      date: { type: String, default:Date.now() },
-      attendance: { 
-        leave:Number,
-        LateCount: Number,
+      description: {
+        goodPoints: [String],
+        improvementRequirement: [String],
       },
-      CodeReviewer : {
-        Quality: Number,
-        Communication : Number,
-        Behaviour: Number,
-        TaskDelivery: Number,
-        Comprehension: Number,
-        EmailCommunication: Number,
-        Redmine:Number
+      codeReviewer: {
+        quality: Number,
+        communication: Number,
+        behaviour: Number,
+        taskDelivery: Number,
+        comprehension: Number,
+        emailCommunication: Number,
+        redmine: Number,
       },
-      Description:{
-        goodPoints: String,
-        ImprovementRequirement: String
-      }
+      attendance: {
+        leave: Number,
+        lateCount: Number,
+      },
     };
     super(baseSchema, collections);
   }
 }
-
-export default FeedbackSchema
+export default FeedbackSchema;
