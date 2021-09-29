@@ -242,7 +242,7 @@ router.get('/all', authMiddleware(USER, 'read'), validationHandler(validation.ge
  *         201:
  *           description: Login Successful
  */
-router.post('/login', validationHandler(validation.create), UserController.login);
+router.post('/login', validationHandler(validation.login), UserController.login);
 
 // create Token
 /**

@@ -57,13 +57,13 @@ export default class VersionableRepository<I extends Document, M extends Model<I
    */
   protected create(data: any): Promise<I> {
     const id = VersionableRepository.generateObjectId();
-    console.log("versionable-data", data)
+    // console.log("versionable-data", data)
     const model = new this.model({
       _id: id,
       originalId: id,
       ...data,
     });
-    console.log("versionable-model", model)
+    // console.log("versionable-model", model)
     return model.save();
   }
 

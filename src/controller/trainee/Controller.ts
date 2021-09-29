@@ -66,22 +66,7 @@ class TraineeController {
   public async create(req: Request, res: Response, next: NextFunction) {
     try {
       const { email, password } = req.body;
-      if (!email) {
-        return next({
-          status: 400,
-          err: 'Bad Request',
-          message: 'email is required',
-        });
-      }
-      if (!password) {
-        return next({
-          status: 400,
-          err: 'Bad Request',
-          message: 'Password is required',
-        });
-      }
       const hashPassword = await bcrypt.hashSync(password, BCRYPT_SALT_ROUNDS);
-      // console.log(email, hashPassword);
       const newTrainee = {
         name: req.body.name,
         email: req.body.email,

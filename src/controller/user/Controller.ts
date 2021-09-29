@@ -12,7 +12,7 @@ class UserController {
    * @param req
    * @param res
    * @param next
-   * @returns
+   * @returns Single user with details
    */
   public async get(req: Request, res: Response, next: NextFunction) {
     try {
@@ -66,19 +66,9 @@ class UserController {
   public async create(req: Request, res: Response, next: NextFunction) {
     try {
       const { email, password } = req.body;
-      if (!email) {
-        return next({
-          status: 400,
-          err: 'Bad Request',
-          message: 'email is required',
-        });
-      }
-      if (!password) {
-        return next({
-          status: 400,
-          err: 'Bad Request',
-          message: 'Password is required',
-        });
+      const isUserExist = await userRepository.findOneData({ email });
+      if (isUserExist) {
+        next({ status: 404, error: 'Bad Request', message: 'user already exist' });
       }
       const hashPassword = await bcrypt.hashSync(password, BCRYPT_SALT_ROUNDS);
       const newUser = {
