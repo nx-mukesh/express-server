@@ -125,26 +125,6 @@ class UserController {
   }
 
   /**
-   * @description Create Token BY ID and Email
-   * @param req
-   * @param res
-   * @param next
-   * @returns New JWT Token
-   */
-  public async createToken(req: Request, res: Response, next: NextFunction) {
-    try {
-      // const { id, email } = req.body;
-      const token = await jwt.sign(req.body, config.secret, { expiresIn: '15m' });
-      return res.status(200).send({
-        message: 'token successfully created',
-        data: { token },
-        status: 200,
-      });
-    } catch (error) {
-      return res.status(500).send({ status: 500, error: 'Server Error', message: 'Something went wrong' });
-    }
-  }
-  /**
    * Login
    * @param req
    * @param res

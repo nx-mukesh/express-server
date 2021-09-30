@@ -9,6 +9,7 @@ export default class UserSchema extends VersionableSchema {
       email: { type: String, required: true },
       password: String,
       role: String,
+      feedbacks:{type:Array},
     };
 
     super(baseSchema, collections);

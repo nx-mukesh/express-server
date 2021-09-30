@@ -32,8 +32,10 @@ export default class VersionableRepository<I extends Document, M extends Model<I
    */
   protected find(query, projection?: any, options?: any): Query<EnforceDocument<I, {}>[], EnforceDocument<I, {}>> {
     const { skip = 0, limit = 10, sortBy = '-createdAt', search = '' } = query;
+    console.log("query in version repo",query)
     const finalQuery: any = {
       deletedAt: undefined,
+      // ...query,
       $or: [
         { name: { $regex: new RegExp(search), $options: 'i' } },
         { email: { $regex: new RegExp(search), $options: 'i' } },
@@ -91,5 +93,10 @@ export default class VersionableRepository<I extends Document, M extends Model<I
     delete newData.deletedAt;
     const model = new this.model(newData);
     return model.save();
+  }
+
+  protected async updateOne(query:any, projection?:any, options?:any): Promise<I> {
+    return await this.model.findOneAndUpdate(query, projection, options);
+    
   }
 }

@@ -244,34 +244,4 @@ router.get('/all', authMiddleware(USER, 'read'), validationHandler(validation.ge
  */
 router.post('/login', validationHandler(validation.login), UserController.login);
 
-// create Token
-/**
- * @swagger
- * /user/createToken:
- *   post:
- *     description: create token
- *     tags: [User]
- *     requestBody:
- *        description: Enter ID and Email
- *        required: true
- *        content:
- *           application/json:
- *            schema:
- *             type: object
- *             required:
- *              -Id
- *              -Email
- *             properties:
- *               Id:
- *                type: string
- *                example: _id:"614b21527b24882e7a49cf0a"
- *               email:
- *                type: string
- *                example: "milinda@successive.tech"
- *     responses:
- *         200:
- *           description: Token created
- */
-router.post('/createToken', UserController.createToken);
-
 export default router;
