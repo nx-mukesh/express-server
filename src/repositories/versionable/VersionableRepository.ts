@@ -31,15 +31,17 @@ export default class VersionableRepository<I extends Document, M extends Model<I
    * @returns Array of Documents
    */
   protected find(query, projection?: any, options?: any): Query<EnforceDocument<I, {}>[], EnforceDocument<I, {}>> {
-    const { skip = 0, limit = 10, sortBy = '-createdAt', search = '' } = query;
+    const { search = '' } = query;
+    const { skip = 0, limit = 10, sortBy = '-createdAt' } = options;
     const finalQuery: any = {
       deletedAt: undefined,
       $or: [
         { name: { $regex: new RegExp(search), $options: 'i' } },
         { email: { $regex: new RegExp(search), $options: 'i' } },
+        { role: { $regex: new RegExp(search), $options: 'i' } },
       ],
     };
-    return this.model.find(finalQuery, projection, { skip: skip, limit: limit }).sort(`-${sortBy}`);
+    return this.model.find(finalQuery, projection, { skip: +skip, limit: +limit }).sort(`${sortBy}`);
   }
 
   /**

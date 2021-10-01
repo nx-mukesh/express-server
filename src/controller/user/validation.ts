@@ -39,15 +39,27 @@ export default Object.freeze({
     id: { required: true, errorMessage: 'Id is required', in: ['params'] },
   },
   get: {
+    required: false,
     skip: {
       default: 0,
-      isInt: true,
       in: ['query'],
       errorMessage: 'Skip is invalid',
     },
     limit: {
       default: 10,
-      isInt: true,
+      in: ['query'],
+      errorMessage: 'Limit is invalid',
+    },
+  },
+  getAll: {
+    required: false,
+    skip: {
+      default: 0,
+      in: ['query'],
+      errorMessage: 'Skip is invalid',
+    },
+    limit: {
+      default: 10,
       in: ['query'],
       errorMessage: 'Limit is invalid',
     },

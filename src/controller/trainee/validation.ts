@@ -36,17 +36,14 @@ export default Object.freeze({
     id: { required: true, errorMessage: 'Id is required', in: ['params'] },
   },
   get: {
+    required: false,
     skip: {
-      required: false,
       default: 0,
-      isInt: true,
       in: ['query'],
       errorMessage: 'Skip is invalid',
     },
     limit: {
-      required: false,
       default: 10,
-      isInt: true,
       in: ['query'],
       errorMessage: 'Limit is invalid',
     },

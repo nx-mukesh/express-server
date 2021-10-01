@@ -3,7 +3,6 @@ import { traineeRouter, userRouter, feedbackRouter } from './controller';
 
 export const router: Router = Router();
 /**
- *
  * @swagger
  * securityDefinitions:
  *   APIKeyHeader:
@@ -13,7 +12,7 @@ export const router: Router = Router();
  */
 router.use('/trainee', traineeRouter);
 router.use('/user', userRouter);
-// review 
-router.use('/feedback', feedbackRouter)
+// review
+router.use('/feedback', feedbackRouter);
 
 export default router;
