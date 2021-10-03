@@ -43,8 +43,8 @@ class UserController {
    */
   public async getAll(req: Request, res: Response, next: NextFunction) {
     try {
-      const { skip, limit, search } = req.query;
-      const userData = await userRepository.findData({ deletedAt: undefined, skip, limit, search });
+      const { skip, limit, search, sortBy } = req.query;
+      const userData = await userRepository.findData({ search }, {}, { skip, limit, sortBy });
       const documents = await userRepository.count();
       return res.status(200).send({
         status: 200,
@@ -123,7 +123,6 @@ class UserController {
       return res.status(500).send({ status: 500, error: 'server error', message: 'Something went Wrong' });
     }
   }
-
   /**
    * Login
    * @param req

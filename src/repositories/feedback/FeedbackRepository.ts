@@ -7,19 +7,15 @@ import IFeedbackModel from './IFeedbackModel';
 import VersionableRepository from '../versionable/VersionableRepository';
 
 class FeedbackRepository extends VersionableRepository<IFeedbackModel, Model<IFeedbackModel>> {
+  // private model;
   constructor() {
     super(feedbackModel);
   }
-  public static generateObjectId() {
-    return String(new Types.ObjectId());
-  }
-
   public findOneData(query): Query<IFeedbackModel, IFeedbackModel> {
     return super.findOne(query);
   }
 
   public findData(query, projection?: any, option?: any): Query<IFeedbackModel[], IFeedbackModel> {
-    console.log("want to find", query)
     return super.find(query, projection, option);
   }
 
@@ -28,7 +24,6 @@ class FeedbackRepository extends VersionableRepository<IFeedbackModel, Model<IFe
   }
 
   public async create(data: any): Promise<IFeedbackModel> {
-    console.log("feedBack repo", data)
     return super.create(data);
   }
 
@@ -39,5 +34,8 @@ class FeedbackRepository extends VersionableRepository<IFeedbackModel, Model<IFe
   public async update(data: any): Promise<IFeedbackModel> {
     return super.update(data);
   }
+  // public async updateOnly(data: any): Query<IFeedbackModel[], IFeedbackModel> {
+  //   return super.updateOneOnly(data);
+  // }
 }
 export default FeedbackRepository;

@@ -31,17 +31,20 @@ export default class VersionableRepository<I extends Document, M extends Model<I
    * @returns Array of Documents
    */
   protected find(query, projection?: any, options?: any): Query<EnforceDocument<I, {}>[], EnforceDocument<I, {}>> {
-    const { skip = 0, limit = 10, sortBy = '-createdAt', search = '' } = query;
-    console.log("query in version repo",query)
+    console.log("in findQuery", query)
+    const { search = '' } = query;
+    const { skip = 0, limit = 10, sortBy = '-createdAt' } = options;
     const finalQuery: any = {
       deletedAt: undefined,
       // ...query,
       $or: [
         { name: { $regex: new RegExp(search), $options: 'i' } },
         { email: { $regex: new RegExp(search), $options: 'i' } },
+        { role: { $regex: new RegExp(search), $options: 'i' } },
       ],
     };
-    return this.model.find(finalQuery, projection, { skip: skip, limit: limit }).sort(`-${sortBy}`);
+    console.log('finalQuery', finalQuery);
+    return this.model.find(finalQuery, projection, { skip: +skip, limit: +limit }).sort(`${sortBy}`);
   }
 
   /**
@@ -95,8 +98,13 @@ export default class VersionableRepository<I extends Document, M extends Model<I
     return model.save();
   }
 
-  protected async updateOne(query:any, projection?:any, options?:any): Promise<I> {
-    return await this.model.findOneAndUpdate(query, projection, options);
-    
-  }
+  // protected async updateOneOnly(query, data:any):  Query<any, EnforceDocument<I, {}>>{
+  //   const previousData = await this.findOne({ _id: query._id, deletedAt: undefined });
+  //   console.log("previousFeedback", previousData)
+  // if (previousData) {
+  //   return this.model.updateOne(data);
+  //   } else {
+  //   return undefined;
+  // }
+  // }
 }

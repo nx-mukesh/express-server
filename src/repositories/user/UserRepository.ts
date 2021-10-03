@@ -34,9 +34,9 @@ class UserRepository extends VersionableRepository<IUserModel, Model<IUserModel>
   public async update(data: any): Promise<IUserModel> {
     return super.update(data);
   }
-  public async updateOne(filter: any, projection?: any, options?: any): Promise<IUserModel> {
-    return super.updateOne(filter, projection, options);
-  }
+  // public async updateOne(filter: any, projection?: any, options?: any): Promise<IUserModel> {
+  //   return super.updateOne(filter, projection, options);
+  // }
 }
 
 export default UserRepository;

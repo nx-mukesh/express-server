@@ -24,6 +24,6 @@ export const permissions: any = {
   [FEEDBACK]: {
     read: [TRAINEE, TRAINER, HEAD_TRAINER, REVIEWER],
     write: [REVIEWER],
-    delete: [HEAD_TRAINER],
+    delete: [REVIEWER],
   },
 };

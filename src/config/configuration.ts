@@ -20,34 +20,28 @@ const configuration: IConfig = Object.freeze({
   secret: process.env.TOKEN,
   mongoURL: process.env.MONGO_URL,
   swaggerDefinition: {
-    // openapi: '3.0.0',
-    basePath: '/api',
+    openapi: '3.0.0',
+    // basePath: '/api',
     info: {
       ...SwaggerSetup,
       version,
     },
     servers: [{ url: 'http://localhost:9000/api' }],
-    securityDefinitions: {
-      JWT: {
-        type: 'apiKey',
-        description: 'JWT authorization of an API',
-        name: 'Authorization',
-        in: 'header',
+    components: {
+      securitySchema: {
+        bearerAuth: {
+          type: 'http',
+          schema: 'bearer',
+          bearerFormat: 'JWT',
+        },
       },
     },
-    // components:{
-    // 	securitySchema:{
-    // 		bearerAuth: {
-    // 			type:"http",
-    // 			schema:'bearer',
-    // 			bearerFormat:"JWT",
-    // 		}
-    // 	}
-    // },
-    // security:[{
-    // 	bearerAuth:[]
-    // }],
   },
+  security: [
+    {
+      bearerAuth: [],
+    },
+  ],
   swaggerUrl: SwaggerURL,
 });
 

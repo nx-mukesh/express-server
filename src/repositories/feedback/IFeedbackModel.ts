@@ -3,6 +3,7 @@ import * as mongoose from 'mongoose';
 export default interface IFeedbackModel extends mongoose.Document {
   trainerId: string;
   reviewerId: string;
+  createdAt: string;
   _id: string;
   attendance: {
     leave: number;

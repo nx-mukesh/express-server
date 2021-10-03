@@ -4,7 +4,7 @@ import VersionableSchema from '../versionable/VersionableSchema';
 class FeedbackSchema extends VersionableSchema {
   constructor(collections: any) {
     const baseSchema = {
-      traineeId: { type: String, ref: 'trainee', required: true },
+      traineeId: { type: String, required: true },
       reviewerId: { type: String, ref: 'user', required: true },
       _id: { type: String },
       description: {
