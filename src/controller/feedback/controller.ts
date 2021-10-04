@@ -22,19 +22,24 @@ class feedbackControllers {
       const token = req.header('Authorization');
       const userToken = await jwt.verify(token, secret);
 
-      const counts = await feedbackRepository.count();
       // const feedbacks = await userRepository.findOneData({ _id: userToken._id });
-      console.log("userToken._id",userToken._id)
-
-      const feedbacks = await feedbackRepository.findOneData({ traineeId: userToken._id });
+      console.log('userToken._id', userToken._id);
+      const { skip, limit, search, sortBy } = req.query;
+      const trainee = await userRepository.findOneData({ _id: userToken._id });
+      if (trainee.role !== 'trainee') {
+        const feedbacks = await feedbackRepository.findData({ search }, {}, { skip, limit, sortBy });
+        return res.status(200).send({ status: 200, message: 'All feedbacks', feedbacks: feedbacks });
+      }
+      const feedbacks = await feedbackRepository.findData(
+        { traineeId: userToken._id, search },
+        {},
+        { skip, limit, sortBy }
+      );
+      const counts = await feedbackRepository.count();
       return res.status(200).send({ status: 200, message: 'feedback fetched', count: counts, data: feedbacks });
     } catch (err) {
       return res.status(404).send({ status: 404, error: err, message: 'Feedback not found' });
     }
-  }
-
-  public async feedbackDetails(req, res, next) {
-    const feedbackId = req.params.id;
   }
 
   public async createFeedback(req: Request, res: Response, next: NextFunction) {
@@ -55,11 +60,6 @@ class feedbackControllers {
         reviewerId: reviewer._id,
         ...req.body,
       });
-      // console.log('feedback', feedback.createdAt);
-      // console.log('feedbackId', feedback._id);
-      // const { _id } = feedback;
-      // await userRepository.updateOne({ _id: traineeId }, { $push: { feedbacks: [_id] } }, { new: true, upsert: true });
-      // console.log('added Feedback id in userRepo', addFeedback);
       return res.status(200).send({ status: 200, message: 'feedback created successfully', data: feedback });
     } catch (err) {
       return res.status(404).send({ status: 500, error: err, message: 'Something Went Wrong!!' });
@@ -69,8 +69,15 @@ class feedbackControllers {
   public async updateFeedback(req: Request, res: Response, next: NextFunction) {
     try {
       const Id = req.params.id;
-      const updateFeedback = await feedbackRepository.update({ _id: Id, ...req.body });
-      return res.status(200).send({ status: 200, message: 'user updated successfully', UserData: updateFeedback });
+      const feedbackCreator = await feedbackRepository.findOneData({ _id: Id });
+      const { secret } = config;
+      const token = req.header('Authorization');
+      const userToken = await jwt.verify(token, secret);
+      if (feedbackCreator.reviewerId !== userToken._id) {
+        return next({ status: 400, error: 'permission denied', message: 'this feedback created by other!!' });
+      }
+      const updateFeedback = await feedbackRepository.updateOne({ _id: Id }, { ...req.body });
+      return res.status(200).send({ status: 200, message: 'feedback updated successfully', UserData: updateFeedback });
     } catch (error) {
       return res.status(500).send({ status: 500, error: 'Server Error', message: 'Something went wrong' });
     }

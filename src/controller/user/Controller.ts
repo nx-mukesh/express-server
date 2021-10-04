@@ -17,9 +17,6 @@ class UserController {
   public async get(req: Request, res: Response, next: NextFunction) {
     try {
       const token = req.header('Authorization');
-      if (!token) {
-        return next({ status: 403, error: 'Unauthorized', message: 'Token not found' });
-      }
       const { secret } = config;
       const user = await jwt.verify(token, secret);
       const userData = await userRepository.findOneData({ _id: user._id });

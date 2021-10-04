@@ -20,6 +20,7 @@ export default class VersionableRepository<I extends Document, M extends Model<I
    */
   protected findOne(query: any): Query<EnforceDocument<I, {}>, EnforceDocument<I, {}>, {}, I> {
     const finalQuery = { deletedAt: undefined, ...query };
+    console.log('findOne versionRepo', query);
     return this.model.findOne(finalQuery).lean();
   }
 
@@ -31,12 +32,14 @@ export default class VersionableRepository<I extends Document, M extends Model<I
    * @returns Array of Documents
    */
   protected find(query, projection?: any, options?: any): Query<EnforceDocument<I, {}>[], EnforceDocument<I, {}>> {
-    console.log("in findQuery", query)
+    console.log('in findQuery', query);
+    console.log('in projection', projection);
+    console.log('in options', options);
     const { search = '' } = query;
     const { skip = 0, limit = 10, sortBy = '-createdAt' } = options;
     const finalQuery: any = {
       deletedAt: undefined,
-      // ...query,
+      ...query,
       $or: [
         { name: { $regex: new RegExp(search), $options: 'i' } },
         { email: { $regex: new RegExp(search), $options: 'i' } },
@@ -98,13 +101,13 @@ export default class VersionableRepository<I extends Document, M extends Model<I
     return model.save();
   }
 
-  // protected async updateOneOnly(query, data:any):  Query<any, EnforceDocument<I, {}>>{
-  //   const previousData = await this.findOne({ _id: query._id, deletedAt: undefined });
-  //   console.log("previousFeedback", previousData)
-  // if (previousData) {
-  //   return this.model.updateOne(data);
-  //   } else {
-  //   return undefined;
-  // }
-  // }
+  protected async updateOne(query, data: any): Promise<I> {
+    const previousData = await this.findOne({ _id: query._id, deletedAt: undefined });
+    console.log('previousFeedback', previousData);
+    if (previousData) {
+      return this.model.findOneAndUpdate(query, data);
+    } else {
+      return undefined;
+    }
+  }
 }

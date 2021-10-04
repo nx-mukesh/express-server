@@ -34,8 +34,8 @@ class FeedbackRepository extends VersionableRepository<IFeedbackModel, Model<IFe
   public async update(data: any): Promise<IFeedbackModel> {
     return super.update(data);
   }
-  // public async updateOnly(data: any): Query<IFeedbackModel[], IFeedbackModel> {
-  //   return super.updateOneOnly(data);
-  // }
+  public async updateOne(query, data: any): Promise<IFeedbackModel> {
+    return super.updateOne(query, data);
+  }
 }
 export default FeedbackRepository;

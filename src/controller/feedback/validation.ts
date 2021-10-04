@@ -18,13 +18,13 @@ export default Object.freeze({
     'description.*': {
       notEmpty: {
         errorMessage: 'Field should not be empty',
-        bail: true
+        bail: true,
       },
-      in:['body']
-    }
+      in: ['body'],
+    },
   },
   get: {
-    required:false,
+    required: false,
     // skip: {
     //   default: 0,
     //   isInt: true,
