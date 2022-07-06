@@ -1,34 +1,49 @@
 export default Object.freeze({
-  // POST  /api/trainee/create
   create: {
-    email: {
-      errorMessage: 'email is required',
-      required: true,
-      string: true,
+    required: ['name', 'email', 'password', 'role'],
+    name: {
+      errorMessage: 'Name can not be Number',
+      isString: true,
+      isLength: {
+        options: { min: 3 },
+        errorMessage: 'Name must be at least 3 characters long',
+      },
       in: ['body'],
+    },
+    email: {
+      errorMessage: 'Email Id must be correct',
+      required: true,
+      isEmail: {
+        bail: true,
+      },
     },
     password: {
-      required: true,
-      regex: '',
+      errorMessage: 'Password should be at least 4 character',
+      isLength: {
+        options: { min: 4 },
+      },
       in: ['body'],
-      errorMessage: 'Password is required',
+    },
+    role: {
+      errorMessage: 'Role required',
+      isLength: {
+        options: { min: 3 },
+      },
     },
   },
+
   delete: {
     id: { required: true, errorMessage: 'Id is required', in: ['params'] },
   },
   get: {
+    required: false,
     skip: {
-      required: false,
       default: 0,
-      number: true,
       in: ['query'],
       errorMessage: 'Skip is invalid',
     },
     limit: {
-      required: false,
       default: 10,
-      number: true,
       in: ['query'],
       errorMessage: 'Limit is invalid',
     },
@@ -36,18 +51,27 @@ export default Object.freeze({
   update: {
     id: {
       required: true,
-      string: true,
-      in: ['Params'],
-      errorMessage: 'Id required in Params',
+      in: ['params', 'query'],
+      errorMessage: 'Id required',
     },
     dataToUpdate: {
       in: ['body'],
       required: true,
-      // isObject: true,
-      // custom: (dataToUpdate) => {
-      //   console.log('dataToUpdate', dataToUpdate);
-      //   throw { error: 'Error Occurred', message: 'Message' };
-      // },
+    },
+  },
+  login: {
+    required: ['email', 'password'],
+    email: {
+      required: true,
+      isEmail: {
+        bail: true,
+      },
+      errorMessage: 'email id required',
+    },
+    password: {
+      required: true,
+      errorMessage: 'password required',
+      in: ['body'],
     },
   },
 });

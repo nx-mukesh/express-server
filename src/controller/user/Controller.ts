@@ -12,14 +12,11 @@ class UserController {
    * @param req
    * @param res
    * @param next
-   * @returns
+   * @returns Single user with details
    */
   public async get(req: Request, res: Response, next: NextFunction) {
     try {
       const token = req.header('Authorization');
-      if (!token) {
-        return next({ status: 403, error: 'Unauthorized', message: 'Token not found' });
-      }
       const { secret } = config;
       const user = await jwt.verify(token, secret);
       const userData = await userRepository.findOneData({ _id: user._id });
@@ -43,8 +40,8 @@ class UserController {
    */
   public async getAll(req: Request, res: Response, next: NextFunction) {
     try {
-      const { skip, limit, search } = req.query;
-      const userData = await userRepository.findData({ deletedAt: undefined, skip, limit, search });
+      const { skip, limit, search, sortBy } = req.query;
+      const userData = await userRepository.findData({ search }, {}, { skip, limit, sortBy });
       const documents = await userRepository.count();
       return res.status(200).send({
         status: 200,
@@ -66,19 +63,9 @@ class UserController {
   public async create(req: Request, res: Response, next: NextFunction) {
     try {
       const { email, password } = req.body;
-      if (!email) {
-        return next({
-          status: 400,
-          err: 'Bad Request',
-          message: 'email is required',
-        });
-      }
-      if (!password) {
-        return next({
-          status: 400,
-          err: 'Bad Request',
-          message: 'Password is required',
-        });
+      const isUserExist = await userRepository.findOneData({ email });
+      if (isUserExist) {
+        next({ status: 404, error: 'Bad Request', message: 'user already exist' });
       }
       const hashPassword = await bcrypt.hashSync(password, BCRYPT_SALT_ROUNDS);
       const newUser = {
@@ -131,27 +118,6 @@ class UserController {
       });
     } catch (error) {
       return res.status(500).send({ status: 500, error: 'server error', message: 'Something went Wrong' });
-    }
-  }
-
-  /**
-   * @description Create Token BY ID and Email
-   * @param req
-   * @param res
-   * @param next
-   * @returns New JWT Token
-   */
-  public async createToken(req: Request, res: Response, next: NextFunction) {
-    try {
-      // const { id, email } = req.body;
-      const token = await jwt.sign(req.body, config.secret, { expiresIn: '15m' });
-      return res.status(200).send({
-        message: 'token successfully created',
-        data: { token },
-        status: 200,
-      });
-    } catch (error) {
-      return res.status(500).send({ status: 500, error: 'Server Error', message: 'Something went wrong' });
     }
   }
   /**
